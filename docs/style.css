@@ -82,7 +82,7 @@ height: 50vh;
 width: 50vh;
 margin-bottom: 12px;
 }
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 800x) {
 .input-panel-inactive {
 display: none;
 }
@@ -116,9 +116,14 @@ border: 0 none transparent;
 background-color: inherit;
 color: white;
 }
+.state-table {
+width: 100%;
+border-collapse: collapse;
+}
 .state-table-row:hover {
-opacity: 0.75;
+opacity: 1.0;
 }
 .state-table-row {
 height: 50px;
+opacity: 0.85;
 }
