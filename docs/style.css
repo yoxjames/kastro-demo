@@ -31,9 +31,6 @@ color: white;
 height: 100%;
 width: 100%;
 }
-code:hover, code:active {
-text-decoration: underline;
-}
 .event-table-row:nth-child(odd) {
 background-color: #312e2e;
 }
