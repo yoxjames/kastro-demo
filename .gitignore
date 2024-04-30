@@ -1,0 +1,20 @@
+.gradle
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Custom Stuff ###
+!docs
+!CNAME
+kotlin-js-store
+*.jar
+!gradle/wrapper/gradle-wrapper.jar

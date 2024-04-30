@@ -1,0 +1,19 @@
+style:
+  # This rule simply drives me mad.
+  MagicNumber:
+    active: false
+naming:
+  # Never liked this rule. I do what I want!
+  TopLevelPropertyNaming:
+    active: false
+  FunctionNaming:
+    functionPattern: "[a-zA-Z][a-zA-Z0-9]*"
+complexity:
+  CyclomaticComplexMethod:
+    active: false # Html templating as function types really inflates this.
+  LongMethod:
+    active: false # I am using methods as HTML templates so they are going to be long.
+  LongParameterList:
+    active: false
+  TooManyFunctions:
+    active: false

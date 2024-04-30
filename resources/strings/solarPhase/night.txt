@@ -1,0 +1,3 @@
+The sun is 18° or more below the horizon. This state represents the absence of any subtype of twilight while the sun is below the horizon.
+
+
