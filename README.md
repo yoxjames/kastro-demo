@@ -5,30 +5,28 @@ https://yoxjames.github.io/kastro-demo/
 This project is a demo of my library [Kastro](https://github.com/yoxjames/Kastro). Kastro is a Kotlin Multiplatform 
 library for calculating information about the moon and sun. 
 
-Please check it out at https://github.com/yoxjames/Kastro. 
-
-This project is an implementation of a static site generator which generates a site which generates a site that consumes
-Kastro's Javascript implementation. All calculations run locally on your browser via JS as the site is entirely static.
+Kastro is an implementation of a static site generator which generates a site that consumes Kastro's Javascript implementation. All calculations run locally on your browser via JS as the site is entirely static.
 However, the site makes heavy use of Javascript for an interactive UI despite having no server actually be required
 for the interactive content. The only functionality that requires an ongoing internet connection is the leaflet map 
 which may need to download new tiles to show you new areas of the map.
 
 The goal of this is to:
-1. Make it easy to find, reproduce, and report bugs in Kastro
-2. Show off what Kastro can calculate.
-3. Make a site that could potentially be useful.
+1. Show off what Kastro can calculate.
+2. Demonstrate a way of seeing sun and moon calculations in a ways that makes sense
+3. Make it easy to find, reproduce, and report bugs in Kastro
+
 
 ## What this is not
-In contrast to Kastro this is not something I would consider "production ready." This is a prototype tech demo and the
-code reflects this in many places. There's many things I would have done differently for a more complex project or one
+In contrast to Kastro, this is not "production ready." This is a prototype tech demo and the
+code reflects this in many places. There are many things I would have done differently for a more complex project or one
 that I intended others to actually consume. 
 
-If you attempt to build this locally you'll be unable to. This is due to missing artifacts. There's two:
+You won't be able to build this locally because it's missing two artifacts: 
 1. dev.jamesyox:svgk
     * This is a library that implements the svg protocol in Kotlin. This is basically `kotlinx-html`
-    but for the svg protocol. This is getting fairly close to done and I hope to actually publish this soon.
+    but for the svg protocol. This is getting fairly close to done and I hope to publish this soon.
 2. dev.jamesyox:statik
-    * This is a generic static site generator. It's very early alpha. Inspiration for it came from all the problems I 
+    * This is a generic static site generator that's in very early alpha. The inspiration for it came from all the problems I 
    faced making this demo.
 
 As you might be able to guess, these are two projects I am currently working on but have not published. Some day I hope
@@ -38,23 +36,22 @@ I plan to eventually update this demo with the published versions of those libra
 However, for now this code mainly exists to show how Kastro could be used in a real application.
 
 ## How to use
-When you load Kastro by default you will be looking at the current day somewhere in Denver, CO. You are free to change
+When you load Kastro, by default you will be looking at the current day somewhere in Denver, CO. You can change
 the location by dragging the map or manually updating the coordinates. The date can also be changed.
-If you do not see a map you may be on a smaller screen where the settings can only be activated by 
+
+>[!NOTE]
+> If you do not see a map you may be on a smaller screen where the settings can only be activated by 
 pushing the ![settings](./docs/settings.svg) button.
 
-Let's say you wanted to always load your home location. If you just go to https://yoxjames.github.ui/kastro-demo you'll
-be set to Denver, CO at the current date! That's probably not useful to you unless you happen to live in Denver, CO. You are free to change your location by dragging the map or manually entering the coordinates but that would be quite annoying. You could do that one time then click "Copy Location Link." This will produce a URL that will link the demo to a specific location. For example:
+You can select "Copy Location Link," which will copy a URL that links the demo to a specific location. For example: 
 
 https://yoxjames.github.io/kastro-demo/?latitude=42.88364&longitude=-78.87772
 
 Would link you directly to Buffalo, NY. 
 
-Feel free to add a direct link to your favorites or however you prefer.
-
 ## Reporting bugs
 Bug reports for both the demo and Kastro are welcome. However, I am most concerned with bugs in Kastro. If you suspect a
-bug you can click the "Copy Link" button in the demo. This will generate a URL with all the params you currently have
+bug you can click the "Copy Link" button in the demo and share it along with the bug report. This will generate a URL with all the params you currently have
 set. This includes things like location and the date.
 
 For example:
