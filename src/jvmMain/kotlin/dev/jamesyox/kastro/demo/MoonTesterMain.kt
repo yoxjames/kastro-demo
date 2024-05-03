@@ -81,8 +81,8 @@ fun main() {
             body {
                 div(classes = stylesheet.style.phasesContainer.name) {
                     svgMagick {
-                        (1..16).forEach {
-                            Moon(it * 22.5)
+                        for (index in (1..16)) {
+                            Moon(index * 22.5)
                         }
                     }
                 }

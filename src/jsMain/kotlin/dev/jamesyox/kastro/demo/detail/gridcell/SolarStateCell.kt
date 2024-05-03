@@ -129,11 +129,11 @@ private fun SolarStateCell(
             td { +"${solarState.altitude.roundTwoSigFig()}° $horizonMovementIndicator" }
         }
         tr {
-            th { +"Atmospheric Refraction" }
+            th { +"Atmospheric Refraction:" }
             td { +"${solarState.atmosphericRefraction.roundTwoSigFig()}°" }
         }
         tr {
-            th { +"True Altitude" }
+            th { +"True Altitude:" }
             td { +"${solarState.trueAltitude.roundTwoSigFig()}° $horizonMovementIndicator" }
         }
         tr {

@@ -50,7 +50,7 @@ import kotlinx.html.script
 import kotlinx.html.title
 import java.io.File
 
-private const val VERSION = "4"
+private const val VERSION = "5"
 
 fun main() {
     statickSite(
@@ -71,12 +71,21 @@ fun main() {
                         name = "viewport"
                         content = "width=device-width,initial-scale=1.0"
                     }
+                    meta {
+                        name = "keywords"
+                        content = "sunrise, sunset, moonrise, moonset"
+                    }
+                    meta {
+                        name = "description"
+                        content = "Astronomical calculator for solar and lunar events such as " +
+                            "sunrise, sunset, moonrise, and moonset. "
+                    }
                     link {
                         rel = "stylesheet"
                         href = "leaflet.css?v=$VERSION"
                     }
                     link(KastroDemoCssAgreement)
-                    title { +"Kastro Demo" }
+                    title { +"Kastro Demo - Sun and Moon Calculator" }
                 }
                 body {
                     div {

@@ -35,6 +35,7 @@ import kotlinx.css.px
 import kotlinx.css.width
 import kotlinx.html.TagConsumer
 import kotlinx.html.a
+import kotlinx.html.br
 import kotlinx.html.cite
 import kotlinx.html.div
 import kotlinx.html.img
@@ -50,7 +51,7 @@ private const val aboutContent1 = """
     At the most basic level this is a site that can tell you information about the sun and moon. 
     This site was created primarily to showcase a library I wrote called Kastro implements some basic 
     astronomical calculations pertaining to the sun and moon. Both Kastro and the Kastro Demo were written in Kotlin
-    and transpiled to Javascript using Kotlin Multiplatform
+    and transpiled to Javascript using Kotlin Multiplatform.
     """
 
 fun AboutView() = htmlContent {
@@ -64,8 +65,9 @@ fun AboutView() = htmlContent {
         p {
             +aboutContent1
         }
+        br
         p {
-            +"I had three main goals in making this site"
+            +"I had three main goals in making this site:"
         }
         ol {
             li { +"To serve as interactive documentation of what Kastro can calculate." }
