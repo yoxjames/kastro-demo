@@ -59,7 +59,6 @@ import kotlinx.css.transform
 import kotlinx.css.width
 import kotlinx.css.zIndex
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toLocalDate
 import kotlinx.html.InputType
 import kotlinx.html.TagConsumer
 import kotlinx.html.button
@@ -187,12 +186,12 @@ private fun TagConsumer<HTMLElement>.CopyButton(
         +text
         onClickFunction = {
             coroutineScope.launch {
-                val target = it.currentTarget.asDynamic()
+                navigator.clipboard?.writeText(if (withDate) paramState.value.url else paramState.value.locationUrl)
+                val target = it.target.asDynamic()
                 target.innerText = "Copied"
                 delay(1.seconds)
                 target.innerText = text
             }
-            navigator.clipboard?.writeText(if (withDate) paramState.value.url else paramState.value.locationUrl)
         }
     }
 }
@@ -234,10 +233,10 @@ private fun TagConsumer<HTMLElement>.DateInput(
                 type = InputType.date
                 this.value = value.toString()
                 onInputFunction = {
-                    runCatching { (it.target.asDynamic().value as String).toLocalDate() }
+                    runCatching { LocalDate.parse((it.target.asDynamic().value as String)) }
                         .getOrNull()
                         ?.also(onChange)
-                    onChange((it.target.asDynamic().value as String).toLocalDate())
+                    onChange(LocalDate.parse((it.target.asDynamic().value as String)))
                 }
             }
         }

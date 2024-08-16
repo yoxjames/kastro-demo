@@ -29,8 +29,8 @@ group = "dev.jamesyox"
 version = libs.versions.current.get()
 
 repositories {
-    mavenLocal()
     mavenCentral()
+    mavenLocal()
 }
 
 detekt {
@@ -46,9 +46,12 @@ detekt {
 kotlin {
     jvm {
         withJava()
-        jvmToolchain(libs.versions.jvm.get().toInt())
     }
     js {
+        useEsModules()
+        compilerOptions {
+            target.set("es2015")
+        }
         binaries.executable()
         browser { }
     }
@@ -98,7 +101,7 @@ tasks.getByName<Jar>("jvmJar") {
     }
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
-    from(File(webpackTask.outputDirectory.asFile.get(), webpackTask.mainOutputFileName.get())) // bring output file along into the JAR
+    from(webpackTask.outputDirectory.asFile.get()) // bring output file along into the JAR
 }
 
 tasks.register<Copy>("copyJsStatikContent") {
@@ -111,7 +114,7 @@ tasks.register<Copy>("copyJsStatikContent") {
     }
     val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
     dependsOn(webpackTask) // make sure JS gets compiled first
-    from(File(webpackTask.outputDirectory.asFile.get(), webpackTask.mainOutputFileName.get()))
+    from(webpackTask.outputDirectory.asFile.get())
     into("docs/.")
 }
 

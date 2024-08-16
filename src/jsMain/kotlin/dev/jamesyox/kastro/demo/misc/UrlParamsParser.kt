@@ -70,7 +70,6 @@ val CelestialParameters.url: String get(): String {
     }
     return with(window.location) { "$origin$pathname?$paramsString" }
 }
-
 val CelestialParameters.locationUrl: String get(): String {
     val params = listOf(
         LATITUDE_KEY to location.latitude.toString(),

@@ -28,7 +28,6 @@ import kotlinx.css.Display
 import kotlinx.css.FlexDirection
 import kotlinx.css.FlexWrap
 import kotlinx.css.GridTemplateColumns
-import kotlinx.css.JustifyContent
 import kotlinx.css.Padding
 import kotlinx.css.backgroundColor
 import kotlinx.css.columnGap
@@ -36,7 +35,6 @@ import kotlinx.css.display
 import kotlinx.css.flexDirection
 import kotlinx.css.flexWrap
 import kotlinx.css.gridTemplateColumns
-import kotlinx.css.justifyContent
 import kotlinx.css.padding
 import kotlinx.css.px
 import kotlinx.css.rowGap
@@ -56,7 +54,6 @@ fun CurrentView(
             gridTemplateColumns = GridTemplateColumns.repeat("2, minmax(0, 1fr)")
             columnGap = 12.px
             rowGap = 12.px
-            justifyContent = JustifyContent.center
         }
         SolarStateCell(coroutineScope, globalState)
         LunarStateCell(coroutineScope, globalState)

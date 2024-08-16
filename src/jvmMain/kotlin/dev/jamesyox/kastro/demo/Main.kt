@@ -50,7 +50,7 @@ import kotlinx.html.script
 import kotlinx.html.title
 import java.io.File
 
-private const val VERSION = "5"
+private const val VERSION = "6"
 
 fun main() {
     statickSite(
@@ -104,7 +104,7 @@ fun main() {
                             }
                             +"Kastro Demo by James Yox."
                             br
-                            +"kastro-js:0.2.0"
+                            +"kastro-js:0.3.0"
                         }
                     }
                 }

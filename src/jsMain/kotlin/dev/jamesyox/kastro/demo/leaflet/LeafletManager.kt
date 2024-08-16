@@ -21,8 +21,10 @@ import dev.jamesyox.kastro.demo.GlobalState
 import dev.jamesyox.kastro.demo.KastroDemoEvent
 import dev.jamesyox.kastro.demo.misc.Location
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import web.dom.observers.ResizeObserver
+import kotlin.js.Promise
 import kotlin.js.json
 import kotlin.math.roundToInt
 
@@ -31,10 +33,9 @@ class LeafletManager(
     private val coroutineScope: CoroutineScope,
     private val globalState: GlobalState
 ) {
-    private val leaflet = js("""require("leaflet")""")
-    private val map = leaflet.map("map")
+    private val leafletPromise = js("""import("leaflet")""") as Promise<dynamic>
 
-    private fun moveListener() {
+    private fun moveListener(map: dynamic) {
         coroutineScope.launch {
             val latitude = map.getCenter().lat.unsafeCast<Double>()
                 .let { it * 100000.0 }
@@ -49,37 +50,41 @@ class LeafletManager(
         }
     }
     fun run() {
-        try {
-            leaflet.tileLayer(
-                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                json(
-                    "maxZoom" to 19,
-                    "attribution" to "&copy <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
-                )
-            ).addTo(map)
+        coroutineScope.launch {
+            try {
+                val leaflet = leafletPromise.await()
+                val map = leaflet.map("map")
+                leaflet.tileLayer(
+                    "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    json(
+                        "maxZoom" to 19,
+                        "attribution" to "&copy <a href=\"http://www.openstreetmap.org/copyright\">OpenStreetMap</a>"
+                    )
+                ).addTo(map)
 
-            map.on("moveend") { moveListener() }
-            val mapElement = web.dom.document.getElementById("map")!!
-            val resizeObserver = ResizeObserver { _, _ ->
-                map.invalidateSize()
-                Unit
-            }
-            resizeObserver.observe(mapElement)
-            coroutineScope.launch {
-                globalState.nonMapUpdates.collect {
-                    map.off("moveend")
-                    map.on("moveend") {
-                        map.off("moveend")
-                        map.on("moveend") { moveListener() }
-                    }
-                    val pos = leaflet.latLng(arrayOf(it.latitude, it.longitude))
-                    map.setView(pos, 8)
+                map.on("moveend") { moveListener(map) }
+                val mapElement = web.dom.document.getElementById("map")!!
+                val resizeObserver = ResizeObserver { _, _ ->
+                    map.invalidateSize()
+                    Unit
                 }
+                resizeObserver.observe(mapElement)
+                launch {
+                    globalState.nonMapUpdates.collect {
+                        map.off("moveend")
+                        map.on("moveend") {
+                            map.off("moveend")
+                            map.on("moveend") { moveListener(map) }
+                        }
+                        val pos = leaflet.latLng(arrayOf(it.latitude, it.longitude))
+                        map.setView(pos, 8)
+                    }
+                }
+            } catch (e: kotlin.coroutines.cancellation.CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                println("Error $e")
             }
-        } catch (e: kotlin.coroutines.cancellation.CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            println("Error $e")
         }
     }
 }

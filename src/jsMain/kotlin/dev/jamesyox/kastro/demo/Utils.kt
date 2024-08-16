@@ -35,6 +35,9 @@ import kotlinx.coroutines.launch
 import kotlinx.css.StyledElement
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import kotlinx.html.TagConsumer
 import kotlinx.html.consumers.onFinalize
 import kotlinx.html.dom.createTree
@@ -195,10 +198,16 @@ fun HTMLElement.mountClass(coroutineScope: CoroutineScope, flow: Flow<ClassSelec
 }
 
 internal fun LocalTime.prettyString(): String {
-    val suffix = if (this > LocalTime(12, 0, 0)) "pm" else "am"
-    val minute = minute.toString().padStart(2, '0')
-    val second = second.toString().padStart(2, '0')
-    return "${prettyHour(hour)}:$minute:$second $suffix"
+    val timeFormat = LocalTime.Format {
+        amPmHour(padding = Padding.NONE)
+        char(':')
+        minute()
+        char(':')
+        second()
+        char(' ')
+        amPmMarker(am = "am", pm = "pm")
+    }
+    return format(timeFormat)
 }
 
 fun Double.roundTwoSigFig(): String {

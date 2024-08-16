@@ -14,6 +14,7 @@ out/
 
 ### Custom Stuff ###
 !docs
+.kotlin
 !CNAME
 kotlin-js-store
 *.jar
