@@ -24,10 +24,11 @@ import dev.jamesyox.kastro.demo.luna.prettyString
 import dev.jamesyox.kastro.demo.luna.shortDescription
 import dev.jamesyox.kastro.luna.LunarEvent
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toStdlibInstant
 
+context(_: TimeZone)
 fun LunarHorizonEventDetailView(
     event: LunarEvent,
-    timeZone: TimeZone,
     onEvent: (LunarHorizonEventDetailViewEvent) -> Unit
 ) = htmlContent {
     DetailView(
@@ -35,10 +36,7 @@ fun LunarHorizonEventDetailView(
         description = event.shortDescription,
         onBack = { onEvent(LunarHorizonEventDetailViewEvent.BackClicked) }
     ) {
-        TimeCell(
-            timeZone = timeZone,
-            event.time
-        )
+        TimeCell(event.time.toStdlibInstant())
         ApiCell(event)
     }
 }

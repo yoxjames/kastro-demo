@@ -19,10 +19,10 @@ package dev.jamesyox.kastro.demo.misc
 
 import dev.jamesyox.kastro.demo.GlobalState
 import dev.jamesyox.kastro.demo.KastroDemoEvent
-import js.objects.jso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import web.geolocation.GeolocationPosition
+import web.geolocation.PositionOptions
 import web.navigator.navigator
 
 class GeolocationManager(
@@ -33,7 +33,11 @@ class GeolocationManager(
         coroutineScope.launch {
             globalState.geolocationRequests.collect {
                 navigator.geolocation.getCurrentPosition(
-                    options = jso { enableHighAccuracy = true },
+                    options = object : PositionOptions {
+                        override var enableHighAccuracy: Boolean? = true
+                        override var maximumAge: Int? = null
+                        override var timeout: Int? = null
+                    },
                     successCallback = { geolocationPosition: GeolocationPosition ->
                         this@launch.launch {
                             globalState.kastroDemoEvents.emit(

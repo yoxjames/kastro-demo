@@ -30,7 +30,7 @@ fun TagConsumer<HTMLElement>.LightStateCell(
     GridCell {
         h3 { +"Occurs When" }
         p {
-            +"The solar angle is between ${lightPhase.angleRange.start} and ${lightPhase.angleRange.endInclusive} "
+            +"The solar angle is between ${lightPhase.angleRange.start}° and ${lightPhase.angleRange.endInclusive}° "
             +"relative to the horizon during ${lightPhase.phaseType.name.lowercase()}"
         }
     }

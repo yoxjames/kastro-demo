@@ -27,9 +27,9 @@ import dev.jamesyox.kastro.demo.luna.lunarDescription
 import dev.jamesyox.kastro.demo.luna.lunarPrettyString
 import kotlinx.datetime.TimeZone
 
+context(_: TimeZone)
 fun LunarStateDetailView(
     lunarHorizonState: LunarHorizonState,
-    timeZone: TimeZone,
     onEvent: (LunarStateDetailViewEvent) -> Unit
 ) = htmlContent {
     DetailView(
@@ -39,19 +39,11 @@ fun LunarStateDetailView(
     ) {
         val startEvent = lunarHorizonState.startEvent?.let { it::class.simpleName }
         if (startEvent != null) {
-            StartsCell(
-                timeZone = timeZone,
-                time = lunarHorizonState.start,
-                startEventName = startEvent
-            )
+            StartsCell(time = lunarHorizonState.start, startEventName = startEvent)
         }
         val endEvent = lunarHorizonState.endEvent?.let { it::class.simpleName }
         if (endEvent != null) {
-            EndsCell(
-                timeZone = timeZone,
-                time = lunarHorizonState.end,
-                endEventName = endEvent
-            )
+            EndsCell(time = lunarHorizonState.end, endEventName = endEvent)
         }
         if (startEvent != null && endEvent != null) {
             DurationCell(lunarHorizonState.end - lunarHorizonState.start)

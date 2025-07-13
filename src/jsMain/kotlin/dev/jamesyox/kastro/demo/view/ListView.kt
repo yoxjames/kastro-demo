@@ -40,10 +40,10 @@ import kotlinx.css.pct
 import kotlinx.css.px
 import kotlinx.html.js.div
 
+context(_: CoroutineScope)
 fun ListView(
     stylesheet: KastroDemoStylesheet,
     tableType: StateFlow<TableType>,
-    coroutineScope: CoroutineScope,
     kastroDemoTabs: KastroDemoTabs,
     onEvent: (ListViewEvent) -> Unit
 ) = htmlContent {
@@ -61,7 +61,6 @@ fun ListView(
             TabView(
                 stylesheet = stylesheet,
                 selectedTab = tableType,
-                coroutineScope = coroutineScope
             ) {
                 onEvent(ListViewEvent.SelectTab(it))
             }
@@ -69,7 +68,7 @@ fun ListView(
         val tabContent = div {
             css {
                 display = Display.block
-                padding = Padding(horizontal = 12.px)
+                padding = Padding(left = 12.px, right = 12.px, bottom = 12.px)
                 backgroundColor = Color("#171718")
             }
         }
@@ -80,7 +79,7 @@ fun ListView(
                 TableType.Current -> kastroDemoTabs.currentTab
                 TableType.About -> kastroDemoTabs.aboutTab
             }
-        }.mountTo(coroutineScope, tabContent)
+        }.mountTo(tabContent)
     }
 }
 

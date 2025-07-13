@@ -25,18 +25,19 @@ import dev.jamesyox.kastro.demo.sol.stroke
 import dev.jamesyox.kastro.demo.svgk.Selected
 import dev.jamesyox.svgk.TagConsumer
 import dev.jamesyox.svgk.attr.strokeOpacity
+import dev.jamesyox.svgk.attr.types.obj.pct
 import dev.jamesyox.svgk.attrs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.w3c.dom.svg.SVGElement
+import kotlin.time.Instant
 
+context(coroutineScope: CoroutineScope)
 fun TagConsumer<SVGElement>.LightPhaseSpan(
     radius: Double,
     solarLightState: List<SolarLightState>,
     timeRange: ClosedRange<Instant>,
-    coroutineScope: CoroutineScope,
     selected: Flow<Selected.SelectedState?>,
     onClick: (SolarLightState) -> Unit
 ) {
@@ -55,7 +56,7 @@ fun TagConsumer<SVGElement>.LightPhaseSpan(
         selected.collect { selectedState ->
             elements.forEach { mapEntry ->
                 mapEntry.value.attrs {
-                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState)
+                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState).pct
                 }
             }
         }

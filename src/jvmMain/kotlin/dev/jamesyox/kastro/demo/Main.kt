@@ -20,14 +20,12 @@ package dev.jamesyox.kastro.demo
 import dev.jamesyox.kastro.demo.sol.description
 import dev.jamesyox.kastro.sol.LightState
 import dev.jamesyox.kastro.sol.SolarPhase
-import dev.jamesyox.statik.StatickSiteContext
-import dev.jamesyox.statik.copyStatickFile
+import dev.jamesyox.statik.StaticSiteContext
 import dev.jamesyox.statik.css
-import dev.jamesyox.statik.css.link
-import dev.jamesyox.statik.css.stylesheetFile
-import dev.jamesyox.statik.html.indexHtml
-import dev.jamesyox.statik.statickSite
-import dev.jamesyox.statik.text.copyTextFile
+import dev.jamesyox.statik.css.writeCssFile
+import dev.jamesyox.statik.html.writeHtmlFile
+import dev.jamesyox.statik.io.copyResource
+import dev.jamesyox.statik.staticSite
 import kotlinx.css.Padding
 import kotlinx.css.TextAlign
 import kotlinx.css.fontSize
@@ -47,20 +45,21 @@ import kotlinx.html.link
 import kotlinx.html.meta
 import kotlinx.html.p
 import kotlinx.html.script
+import kotlinx.html.styleLink
 import kotlinx.html.title
-import java.io.File
+import kotlinx.io.files.Path
 
 private const val VERSION = "6"
 
 fun main() {
-    statickSite(
-        currentDirectory = File("resources"),
-        siteDirectory = File("docs")
+    staticSite(
+        root = Path("/home/yoxjames/IdeaProjects/kastro-demo/docs")
     ) {
-        stylesheetFile(stylesheetReference = KastroDemoCssAgreement) {
+        val resourcesDirectory = Path("/home/yoxjames/IdeaProjects/kastro-demo/resources")
+        writeCssFile(Path("style.css")) {
             KastroDemoStylesheet(KastroDemoStylesheetAgreement)
         }
-        indexHtml {
+        writeHtmlFile(Path("index.html")) {
             html {
                 lang = "en"
                 head {
@@ -84,7 +83,7 @@ fun main() {
                         rel = "stylesheet"
                         href = "leaflet.css?v=$VERSION"
                     }
-                    link(KastroDemoCssAgreement)
+                    styleLink("style.css")
                     title { +"Kastro Demo - Sun and Moon Calculator" }
                 }
                 body {
@@ -104,36 +103,36 @@ fun main() {
                             }
                             +"Kastro Demo by James Yox."
                             br
-                            +"kastro-js:0.3.0"
+                            +"kastro-js:0.4.0"
                         }
                     }
                 }
             }
-            copyStatickFile("leaflet.css")
-            copyStatickFile("locate.svg")
-            copyStatickFile("back.svg")
-            copyStatickFile("github-mark-white.svg")
-            copyStatickFile("settings.svg")
-            solarPhaseStrings()
-            lightStateStrings()
+            copyResource(resourcesDirectory, Path("leaflet.css"))
+            copyResource(resourcesDirectory, Path("locate.svg"))
+            copyResource(resourcesDirectory, Path("back.svg"))
+            copyResource(resourcesDirectory, Path("github-mark-white.svg"))
+            copyResource(resourcesDirectory, Path("settings.svg"))
+            solarPhaseStrings(resourcesDirectory)
+            lightStateStrings(resourcesDirectory)
         }
     }
 }
 
-private fun StatickSiteContext.solarPhaseStrings() {
-    copyTextFile(SolarPhase.Night.description)
-    copyTextFile(SolarPhase.AstronomicalDawn.description)
-    copyTextFile(SolarPhase.NauticalDawn.description)
-    copyTextFile(SolarPhase.CivilDawn.description)
-    copyTextFile(SolarPhase.Day.description)
-    copyTextFile(SolarPhase.CivilDusk.description)
-    copyTextFile(SolarPhase.NauticalDusk.description)
-    copyTextFile(SolarPhase.AstronomicalDusk.description)
+private fun StaticSiteContext.solarPhaseStrings(resourcesDirectory: Path) {
+    copyResource(resourcesDirectory, Path(SolarPhase.Night.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.AstronomicalDawn.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.NauticalDawn.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.CivilDawn.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.Day.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.CivilDusk.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.NauticalDusk.description))
+    copyResource(resourcesDirectory, Path(SolarPhase.AstronomicalDusk.description))
 }
 
-private fun StatickSiteContext.lightStateStrings() {
-    copyTextFile(LightState.BlueHourDusk.description)
-    copyTextFile(LightState.BlueHourDawn.description)
-    copyTextFile(LightState.GoldenHourDawn.description)
-    copyTextFile(LightState.GoldenHourDusk.description)
+private fun StaticSiteContext.lightStateStrings(resourcesDirectory: Path) {
+    copyResource(resourcesDirectory, Path(LightState.BlueHourDusk.description))
+    copyResource(resourcesDirectory, Path(LightState.BlueHourDawn.description))
+    copyResource(resourcesDirectory, Path(LightState.GoldenHourDawn.description))
+    copyResource(resourcesDirectory, Path(LightState.GoldenHourDusk.description))
 }

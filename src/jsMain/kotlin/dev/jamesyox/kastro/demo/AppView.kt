@@ -53,11 +53,13 @@ import kotlinx.html.TagConsumer
 import kotlinx.html.js.div
 import org.w3c.dom.HTMLElement
 
+context(
+    appScope: CoroutineScope,
+    _: TimeZone
+)
 fun TagConsumer<HTMLElement>.AppView(
     stylesheet: KastroDemoStylesheet,
-    appScope: CoroutineScope,
     globalState: GlobalState,
-    timeZone: TimeZone
 ) {
     div {
         css {
@@ -70,7 +72,6 @@ fun TagConsumer<HTMLElement>.AppView(
         TopPanel(
             stylesheet = stylesheet,
             globalState = globalState,
-            coroutineScope = appScope,
         ) {
             appScope.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.TopPanel(it)) }
         }
@@ -81,87 +82,76 @@ fun TagConsumer<HTMLElement>.AppView(
                 width = 100.pct
             }
         }
-        appScope.launch {
-            globalState.paramsState.map {
-                it.html(
-                    coroutineScope = appScope,
-                    globalState = globalState,
-                    stylesheet = stylesheet
-                ) {
-                    this@launch.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.List(it)) }
-                }
+        globalState.paramsState.map {
+            it.html(
+                globalState = globalState,
+                stylesheet = stylesheet
+            ) {
+                appScope.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.List(it)) }
             }
-                .combine(globalState.selectedItem) { params, selected -> Pair(params, selected) }
-                .map {
-                    when (val selected = it.second) {
-                        is Selected.SelectedEvent.Lunar -> LunarHorizonEventDetailView(
-                            event = selected.lunarEvent,
-                            timeZone = timeZone
-                        ) {
-                            this@launch.launch {
-                                globalState.kastroDemoEvents.emit(
-                                    KastroDemoEvent.DetailView.LunarEvent(it)
-                                )
-                            }
-                        }
-
-                        is Selected.SelectedEvent.Solar -> SolarEventDetailView(
-                            description = selected.solarEvent.shortDescription,
-                            event = selected.solarEvent,
-                            timeZone = timeZone
-                        ) {
-                            this@launch.launch {
-                                globalState.kastroDemoEvents.emit(
-                                    KastroDemoEvent.DetailView.SolarEvent(it)
-                                )
-                            }
-                        }
-
-                        is Selected.SelectedState.Lunar -> LunarStateDetailView(
-                            lunarHorizonState = selected.lunarPhaseState,
-                            timeZone = timeZone
-                        ) {
-                            this@launch.launch {
-                                globalState.kastroDemoEvents.emit(
-                                    KastroDemoEvent.DetailView.Lunar(it)
-                                )
-                            }
-                        }
-
-                        is Selected.SelectedState.Light -> LightStateDetailView(
-                            description = selected.solarLightState.lightState.description(SolarLightDescriptions),
-                            solarLightState = selected.solarLightState,
-                            timeZone = timeZone
-                        ) {
-                            this@launch.launch {
-                                globalState.kastroDemoEvents.emit(
-                                    KastroDemoEvent.DetailView.Light(it)
-                                )
-                            }
-                        }
-
-                        is Selected.SelectedState.Solar -> SolarStateDetailView(
-                            description = selected.solarPhaseState.phase.description(SolarPhaseDescriptions),
-                            solarPhaseState = selected.solarPhaseState,
-                            timeZone = timeZone
-                        ) {
-                            this@launch.launch {
-                                globalState.kastroDemoEvents.emit(
-                                    KastroDemoEvent.DetailView.Solar(it)
-                                )
-                            }
-                        }
-
-                        null -> ListView(
-                            stylesheet = stylesheet,
-                            tableType = globalState.tabState,
-                            coroutineScope = this@launch,
-                            kastroDemoTabs = it.first
-                        ) {
-                            this@launch.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.List(it)) }
+        }
+            .combine(globalState.selectedItem) { params, selected -> Pair(params, selected) }
+            .map {
+                when (val selected = it.second) {
+                    is Selected.SelectedEvent.Lunar -> LunarHorizonEventDetailView(event = selected.lunarEvent) {
+                        appScope.launch {
+                            globalState.kastroDemoEvents.emit(
+                                KastroDemoEvent.DetailView.LunarEvent(it)
+                            )
                         }
                     }
-                }.insertingBefore(lowerContainer, null)
-        }
+
+                    is Selected.SelectedEvent.Solar -> SolarEventDetailView(
+                        description = selected.solarEvent.shortDescription,
+                        event = selected.solarEvent,
+                    ) {
+                        appScope.launch {
+                            globalState.kastroDemoEvents.emit(
+                                KastroDemoEvent.DetailView.SolarEvent(it)
+                            )
+                        }
+                    }
+
+                    is Selected.SelectedState.Lunar -> LunarStateDetailView(
+                        lunarHorizonState = selected.lunarPhaseState,
+                    ) {
+                        appScope.launch {
+                            globalState.kastroDemoEvents.emit(
+                                KastroDemoEvent.DetailView.Lunar(it)
+                            )
+                        }
+                    }
+
+                    is Selected.SelectedState.Light -> LightStateDetailView(
+                        description = selected.solarLightState.lightState.description(SolarLightDescriptions),
+                        solarLightState = selected.solarLightState,
+                    ) {
+                        appScope.launch {
+                            globalState.kastroDemoEvents.emit(
+                                KastroDemoEvent.DetailView.Light(it)
+                            )
+                        }
+                    }
+
+                    is Selected.SelectedState.Solar -> SolarStateDetailView(
+                        description = selected.solarPhaseState.phase.description(SolarPhaseDescriptions),
+                        solarPhaseState = selected.solarPhaseState,
+                    ) {
+                        appScope.launch {
+                            globalState.kastroDemoEvents.emit(
+                                KastroDemoEvent.DetailView.Solar(it)
+                            )
+                        }
+                    }
+
+                    null -> ListView(
+                        stylesheet = stylesheet,
+                        tableType = globalState.tabState,
+                        kastroDemoTabs = it.first
+                    ) {
+                        appScope.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.List(it)) }
+                    }
+                }
+            }.insertingBefore(lowerContainer, null)
     }
 }

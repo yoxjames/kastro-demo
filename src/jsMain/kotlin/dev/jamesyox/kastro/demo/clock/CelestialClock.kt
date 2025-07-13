@@ -24,9 +24,9 @@ import dev.jamesyox.kastro.demo.mountTo
 import dev.jamesyox.kastro.demo.svgk.Selected
 import dev.jamesyox.kastro.demo.svgk.js.svgMagick
 import dev.jamesyox.kastro.luna.calculateLunarState
-import dev.jamesyox.svgk.attr.objs.ViewBox
 import dev.jamesyox.svgk.attr.objs.transform.Scale
 import dev.jamesyox.svgk.attr.objs.transform.Translate
+import dev.jamesyox.svgk.attr.types.obj.ViewBox
 import dev.jamesyox.svgk.svgElement
 import dev.jamesyox.svgk.tags.circle
 import dev.jamesyox.svgk.tags.g
@@ -39,10 +39,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.datetime.Instant
+import kotlinx.datetime.toDeprecatedInstant
 import kotlinx.html.TagConsumer
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.svg.SVGElement
+import kotlin.time.Instant
 
 private const val moonClockRadius = 35.0
 private const val sunClockRadius = 75.0
@@ -53,10 +54,10 @@ data class CelestialClockState(
     val celestialParameters: CelestialParameters
 )
 
+context(_: CoroutineScope)
 fun TagConsumer<HTMLElement>.CelsetialClockComponent(
     state: Flow<CelestialClockState>,
     selected: StateFlow<Selected?>,
-    coroutineScope: CoroutineScope,
     onEvent: (CelestialClockEvent) -> Unit
 ) {
     val svgRoot = svgMagick {
@@ -67,51 +68,48 @@ fun TagConsumer<HTMLElement>.CelsetialClockComponent(
         onEvent(CelestialClockEvent.OnMouseLeave)
     }
 
-    state.asDom(selected) { onEvent(it) }.mountTo(coroutineScope, svgRoot)
+    state.asDom(selected) { onEvent(it) }.mountTo(svgRoot)
 }
 
+context(_: CoroutineScope)
 private fun dev.jamesyox.svgk.TagConsumer<SVGElement>.CelestialClock(
     state: CelestialClockState,
-    coroutineScope: CoroutineScope,
     selected: StateFlow<Selected?>,
     onEvent: (CelestialClockEvent) -> Unit
 ) {
-    val selectedState = selected.filterIsInstance<Selected.SelectedState?>()
-    val selectedEvent = selected.filterIsInstance<Selected.SelectedEvent?>()
-    ClockOverlay(
-        radius = sunClockRadius + 13.0,
-        timeRange = state.celestialParameters.timeRange
-    )
+        val selectedState = selected.filterIsInstance<Selected.SelectedState?>()
+        val selectedEvent = selected.filterIsInstance<Selected.SelectedEvent?>()
+        ClockOverlay(
+            radius = sunClockRadius + 13.0,
+            timeRange = state.celestialParameters.timeRange
+        )
 
-    // Draw twilight phases
-    TwilightSpanner(
-        radius = sunClockRadius,
-        solarPhaseStates = state.celestialParameters.solarPhaseStates,
-        timeRange = state.celestialParameters.timeRange,
-        coroutineScope = coroutineScope,
-        selected = selectedState,
-        onClick = { onEvent(CelestialClockEvent.SolarPhaseEvent.Select(it)) }
-    )
+        // Draw twilight phases
+        TwilightSpanner(
+            radius = sunClockRadius,
+            solarPhaseStates = state.celestialParameters.solarPhaseStates,
+            timeRange = state.celestialParameters.timeRange,
+            selected = selectedState,
+            onClick = { onEvent(CelestialClockEvent.SolarPhaseEvent.Select(it)) }
+        )
 
-    // Draw Light Phases (Golden Hour, Blue Hour)
-    LightPhaseSpan(
-        radius = sunClockRadius - 10.0 - 3.0,
-        solarLightState = state.celestialParameters.solarLightState,
-        coroutineScope = coroutineScope,
-        selected = selectedState,
-        timeRange = state.celestialParameters.timeRange,
-        onClick = { onEvent(CelestialClockEvent.LightEvent.Select(it)) }
-    )
+        // Draw Light Phases (Golden Hour, Blue Hour)
+        LightPhaseSpan(
+            radius = sunClockRadius - 10.0 - 3.0,
+            solarLightState = state.celestialParameters.solarLightState,
+            selected = selectedState,
+            timeRange = state.celestialParameters.timeRange,
+            onClick = { onEvent(CelestialClockEvent.LightEvent.Select(it)) }
+        )
 
-    // Draw Moon Horizon Clock
-    LunarHorizonSpanner(
-        radius = moonClockRadius,
-        lunarHorizonState = state.celestialParameters.lunarHorizonState,
-        timeRange = state.celestialParameters.timeRange,
-        coroutineScope = coroutineScope,
-        selected = selectedState,
-        onClick = { onEvent(CelestialClockEvent.LunarHorizonEvent.Select(it)) }
-    )
+        // Draw Moon Horizon Clock
+        LunarHorizonSpanner(
+            radius = moonClockRadius,
+            lunarHorizonState = state.celestialParameters.lunarHorizonState,
+            timeRange = state.celestialParameters.timeRange,
+            selected = selectedState,
+            onClick = { onEvent(CelestialClockEvent.LunarHorizonEvent.Select(it)) }
+        )
 
     // Current Time
     if (state.celestialParameters.timeRange.contains(state.time)) {
@@ -139,9 +137,15 @@ private fun dev.jamesyox.svgk.TagConsumer<SVGElement>.CelestialClock(
                 Translate(-100, -100),
             )
         ) {
-            Moon(state.time.calculateLunarState(state.celestialParameters.location.asPair()).illumination.phase)
+            Moon(
+                state.time.toDeprecatedInstant()
+                    .calculateLunarState(state.celestialParameters.location.asPair())
+                    .illumination
+                    .phase
+            )
         }
     }
+
     // Other events
     EventSpanner(
         timeRange = state.celestialParameters.timeRange,
@@ -162,6 +166,6 @@ fun Flow<CelestialClockState>.asDom(
     return mapNotNull { state ->
         coroutineScope?.cancel()
         coroutineScope = CoroutineScope(Dispatchers.Default)
-        coroutineScope?.let { svgElement { CelestialClock(state, it, selected, onEvent) } }
+        context(coroutineScope) { svgElement { CelestialClock(state, selected, onEvent) } }
     }
 }

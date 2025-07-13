@@ -18,8 +18,8 @@
 package dev.jamesyox.kastro.demo.clock
 
 import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.objs.ViewBox
 import dev.jamesyox.svgk.attr.objs.pathd.PathD
+import dev.jamesyox.svgk.attr.types.obj.ViewBox
 import dev.jamesyox.svgk.tags.circle
 import dev.jamesyox.svgk.tags.path
 import dev.jamesyox.svgk.tags.svg

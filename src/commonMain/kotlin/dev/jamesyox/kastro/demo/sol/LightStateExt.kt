@@ -18,7 +18,6 @@
 package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.LightState
-import dev.jamesyox.statik.text.StaticTextAgreement
 
 private const val blueHourColor = "#4242f5"
 private const val goldenHourColor = "#DAA520"
@@ -41,8 +40,8 @@ val LightState.prettyString get() = when (this) {
 }
 
 val LightState.description get() = when (this) {
-    LightState.BlueHourDawn -> StaticTextAgreement("strings/lightState/blue_hour_dawn.txt")
-    LightState.BlueHourDusk -> StaticTextAgreement("strings/lightState/blue_hour_dusk.txt")
-    LightState.GoldenHourDawn -> StaticTextAgreement("strings/lightState/golden_hour_dawn.txt")
-    LightState.GoldenHourDusk -> StaticTextAgreement("strings/lightState/golden_hour_dusk.txt")
+    LightState.BlueHourDawn -> "strings/lightState/blue_hour_dawn.txt"
+    LightState.BlueHourDusk -> "strings/lightState/blue_hour_dusk.txt"
+    LightState.GoldenHourDawn -> "strings/lightState/golden_hour_dawn.txt"
+    LightState.GoldenHourDusk -> "strings/lightState/golden_hour_dusk.txt"
 }

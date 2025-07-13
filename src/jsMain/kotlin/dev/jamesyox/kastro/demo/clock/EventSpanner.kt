@@ -31,11 +31,13 @@ import dev.jamesyox.kastro.luna.LunarEvent
 import dev.jamesyox.kastro.sol.SolarEvent
 import dev.jamesyox.svgk.TagConsumer
 import dev.jamesyox.svgk.tags.path
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
+import kotlinx.datetime.toStdlibInstant
 import org.w3c.dom.svg.SVGElement
+import kotlin.time.Instant
 
 private sealed interface KastroEvent {
     value class Solar(
@@ -90,7 +92,7 @@ fun TagConsumer<SVGElement>.EventSpanner(
         .filter { it.shouldDraw }
         .forEach { event ->
             EventHash(
-                time = event.time,
+                time = event.time.toStdlibInstant(),
                 outerRadius = outerRadius,
                 innerRadius = innerRadius,
                 timeRange = timeRange,
@@ -99,50 +101,50 @@ fun TagConsumer<SVGElement>.EventSpanner(
             )
             when (event) {
                 is KastroEvent.Lunar -> when (val lunarEvent = event.event) {
-                    is LunarEvent.HorizonEvent.Moonrise -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.HorizonEvent.Moonrise -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         RiseGlyph("white")
                     }
-                    is LunarEvent.HorizonEvent.Moonset -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.HorizonEvent.Moonset -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         SetGlyph("white")
                     }
-                    is LunarEvent.PhaseEvent.FirstQuarter -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.PhaseEvent.FirstQuarter -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         Moon(LunarEvent.PhaseEvent.FirstQuarter.phase)
                     }
-                    is LunarEvent.PhaseEvent.FullMoon -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.PhaseEvent.FullMoon -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         Moon(LunarEvent.PhaseEvent.FullMoon.phase)
                     }
-                    is LunarEvent.PhaseEvent.LastQuarter -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.PhaseEvent.LastQuarter -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         Moon(LunarEvent.PhaseEvent.LastQuarter.phase)
                     }
-                    is LunarEvent.PhaseEvent.NewMoon -> ClockEventGlyph(time = lunarEvent.time) {
+                    is LunarEvent.PhaseEvent.NewMoon -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
                         Moon(LunarEvent.PhaseEvent.NewMoon.phase)
                     }
                 }
                 is KastroEvent.Solar -> when (val solarEvent = event.event) {
                     is SolarEvent.Sunrise -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time,
+                        time = solarEvent.time.toStdlibInstant(),
                         timeRange = timeRange,
                     ) {
                         RiseGlyph("yellow")
                     }
                     is SolarEvent.Sunset -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time,
+                        time = solarEvent.time.toStdlibInstant(),
                         timeRange = timeRange,
                     ) {
                         SetGlyph("yellow")
                     }
                     is SolarEvent.Nadir -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time,
+                        time = solarEvent.time.toStdlibInstant(),
                         timeRange = timeRange,
                     ) {
                         NadirGlyph()
                     }
                     is SolarEvent.Noon -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time,
+                        time = solarEvent.time.toStdlibInstant(),
                         timeRange = timeRange,
                     ) {
                         NoonGlyph()
@@ -152,23 +154,24 @@ fun TagConsumer<SVGElement>.EventSpanner(
             }
         }
 
-    val coroutineScope = last!!.domCoroutineScope()
-
-    coroutineScope.launch {
-        selectedEvent.map {
-            svgContent {
-                it?.let { selected ->
-                    this@svgContent.EventHash(
-                        time = selected.time,
-                        outerRadius = outerRadius,
-                        innerRadius = selectedInnerRadius,
-                        timeRange = timeRange,
-                        strokeWidth = 0.5,
-                        color = "red"
-                    )
+    context(last!!.domCoroutineScope()) {
+        // This needs to happen after the DOM stuff is attached. Manual dom manipulation. Gotta love it...
+        contextOf<CoroutineScope>().launch {
+            selectedEvent.map {
+                svgContent {
+                    it?.let { selected ->
+                        this@svgContent.EventHash(
+                            time = selected.time.toStdlibInstant(),
+                            outerRadius = outerRadius,
+                            innerRadius = selectedInnerRadius,
+                            timeRange = timeRange,
+                            strokeWidth = 0.5,
+                            color = "red"
+                        )
+                    }
                 }
-            }
-        }.insertingBefore(last!!.parentElement!!, null)
+            }.insertingBefore(last!!.parentElement!!, null)
+        }
     }
 }
 

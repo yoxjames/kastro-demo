@@ -20,9 +20,8 @@ package dev.jamesyox.kastro.demo
 import dev.jamesyox.kastro.demo.KastroDemoStylesheetAgreement.smallScreenOnly
 import dev.jamesyox.kastro.demo.sol.stroke
 import dev.jamesyox.kastro.sol.SolarPhase
-import dev.jamesyox.statik.css.ClassSelector
-import dev.jamesyox.statik.css.StylesheetReference
-import dev.jamesyox.statik.css.classSelector
+import dev.jamesyox.statik.css.Selector
+import dev.jamesyox.statik.css.selector
 import kotlinx.css.Align
 import kotlinx.css.Border
 import kotlinx.css.BorderCollapse
@@ -73,31 +72,26 @@ import kotlinx.css.vh
 import kotlinx.css.width
 
 interface KastroDemoStylesheet {
-    val eventTableRow: ClassSelector
-    val stateTable: ClassSelector
-    val stateTableRow: ClassSelector
-    val inactiveTab: ClassSelector
-    val activeTab: ClassSelector
-    val inputPanelActive: ClassSelector
-    val inputPanelInactive: ClassSelector
-    val smallScreenOnly: ClassSelector
+    val eventTableRow: Selector.Class
+    val stateTable: Selector.Class
+    val stateTableRow: Selector.Class
+    val inactiveTab: Selector.Class
+    val activeTab: Selector.Class
+    val inputPanelActive: Selector.Class
+    val inputPanelInactive: Selector.Class
+    val smallScreenOnly: Selector.Class
 }
 
 object KastroDemoStylesheetAgreement : KastroDemoStylesheet {
-    override val eventTableRow = ClassSelector("event-table-row")
-    override val stateTableRow = ClassSelector("state-table-row")
-    override val inactiveTab = ClassSelector("inactive-tab")
-    override val activeTab = ClassSelector("active-tab")
-    override val inputPanelActive = ClassSelector("input-panel-active")
-    override val inputPanelInactive = ClassSelector("input-panel-inactive")
-    override val smallScreenOnly = ClassSelector("small-screens-only")
-    override val stateTable = ClassSelector("state-table")
+    override val eventTableRow = Selector.Class("event-table-row")
+    override val stateTableRow = Selector.Class("state-table-row")
+    override val inactiveTab = Selector.Class("inactive-tab")
+    override val activeTab = Selector.Class("active-tab")
+    override val inputPanelActive = Selector.Class("input-panel-active")
+    override val inputPanelInactive = Selector.Class("input-panel-inactive")
+    override val smallScreenOnly = Selector.Class("small-screens-only")
+    override val stateTable = Selector.Class("state-table")
 }
-
-val KastroDemoCssAgreement = StylesheetReference(
-    style = KastroDemoStylesheetAgreement,
-    httpPath = "./style.css"
-)
 
 fun CssBuilder.KastroDemoStylesheet(
     agreement: KastroDemoStylesheetAgreement,
@@ -164,17 +158,17 @@ fun CssBuilder.KastroDemoStylesheet(
         }
     }
 
-    classSelector(agreement.inactiveTab) {
+    selector(agreement.inactiveTab) {
         tab()
         backgroundColor = Color.inherit
     }
 
-    classSelector(agreement.activeTab) {
+    selector(agreement.activeTab) {
         tab()
         backgroundColor = Color("#171718")
     }
 
-    classSelector(agreement.inputPanelActive) {
+    selector(agreement.inputPanelActive) {
         display = Display.flex
         flexDirection = FlexDirection.column
         alignItems = Align.center
@@ -185,7 +179,7 @@ fun CssBuilder.KastroDemoStylesheet(
         marginBottom = 12.px
     }
 
-    classSelector(agreement.inputPanelInactive) {
+    selector(agreement.inputPanelInactive) {
         display = Display.flex
         flexDirection = FlexDirection.column
         alignItems = Align.center
@@ -225,7 +219,7 @@ fun CssBuilder.KastroDemoStylesheet(
         }
     }
 
-    classSelector(agreement.eventTableRow) {
+    selector(agreement.eventTableRow) {
         height = 50.px
         border = Border.none
         backgroundColor = Color.inherit
@@ -237,12 +231,12 @@ fun CssBuilder.KastroDemoStylesheet(
         }
     }
 
-    classSelector(agreement.stateTable) {
+    selector(agreement.stateTable) {
         width = 100.pct
         borderCollapse = BorderCollapse.collapse
     }
 
-    classSelector(agreement.stateTableRow) {
+    selector(agreement.stateTableRow) {
         height = 50.px
         opacity = 0.85
 

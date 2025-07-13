@@ -21,7 +21,9 @@ import dev.jamesyox.kastro.demo.distinctUntilChangedBy
 import dev.jamesyox.kastro.sol.SolarEvent
 import dev.jamesyox.kastro.sol.SolarPhase
 import dev.jamesyox.kastro.sol.calculateSolarState
-import kotlinx.datetime.Instant
+import kotlinx.datetime.toDeprecatedInstant
+import kotlinx.datetime.toStdlibInstant
+import kotlin.time.Instant
 
 data class SolarPhaseState(
     val start: Instant,
@@ -47,7 +49,7 @@ fun List<SolarEvent>.solarPhaseStates(
             SolarPhaseTime(
                 start = timeRange.start,
                 startEvent = null,
-                phase = timeRange.start.calculateSolarState(location).solarPhase
+                phase = timeRange.start.toDeprecatedInstant().calculateSolarState(location).solarPhase
             )
         ) { twilightElement, event -> computeTwilightElement(twilightElement, event) }
         .distinctUntilChangedBy { it }
@@ -55,7 +57,7 @@ fun List<SolarEvent>.solarPhaseStates(
             SolarPhaseTime(
                 start = timeRange.endInclusive,
                 startEvent = null,
-                phase = timeRange.endInclusive.calculateSolarState(location).solarPhase
+                phase = timeRange.endInclusive.toDeprecatedInstant().calculateSolarState(location).solarPhase
             )
         ).zipWithNext { firstPhase, secondPhase ->
             SolarPhaseState(
@@ -82,62 +84,62 @@ private fun computeTwilightElement(currentPhase: SolarPhaseTime, event: SolarEve
     is SolarEvent.GoldenHourDusk -> currentPhase
     is SolarEvent.GoldenHourDuskEnd -> currentPhase
     is SolarEvent.AstronomicalDawn -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.AstronomicalDawn,
     )
     is SolarEvent.AstronomicalDusk -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.AstronomicalDusk
     )
     is SolarEvent.CivilDawn -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.CivilDawn
     )
     is SolarEvent.CivilDusk -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.CivilDusk
     )
     is SolarEvent.Day -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.Day
     )
     is SolarEvent.NauticalDawn -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.NauticalDawn
     )
     is SolarEvent.NauticalDusk -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.NauticalDusk
     )
     is SolarEvent.Night -> SolarPhaseTime(
-        start = event.time,
+        start = event.time.toStdlibInstant(),
         startEvent = event,
         phase = SolarPhase.Night
     )
     is SolarEvent.Nadir -> when (currentPhase.phase) {
         SolarPhase.AstronomicalDawn -> currentPhase
         SolarPhase.AstronomicalDusk -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.AstronomicalDawn
         )
         SolarPhase.CivilDawn -> currentPhase
         SolarPhase.CivilDusk -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.CivilDawn
         )
         SolarPhase.Day -> currentPhase
         SolarPhase.NauticalDawn -> currentPhase
         SolarPhase.NauticalDusk -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.NauticalDawn
         )
@@ -145,20 +147,20 @@ private fun computeTwilightElement(currentPhase: SolarPhaseTime, event: SolarEve
     }
     is SolarEvent.Noon -> when (currentPhase.phase) {
         SolarPhase.AstronomicalDawn -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.AstronomicalDusk
         )
         SolarPhase.AstronomicalDusk -> currentPhase
         SolarPhase.CivilDawn -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.CivilDusk
         )
         SolarPhase.CivilDusk -> currentPhase
         SolarPhase.Day -> currentPhase
         SolarPhase.NauticalDawn -> SolarPhaseTime(
-            start = event.time,
+            start = event.time.toStdlibInstant(),
             startEvent = event,
             phase = SolarPhase.NauticalDusk
         )

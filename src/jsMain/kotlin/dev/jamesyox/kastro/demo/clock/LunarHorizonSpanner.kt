@@ -24,21 +24,22 @@ import dev.jamesyox.kastro.demo.luna.LunarHorizonState
 import dev.jamesyox.kastro.demo.svgk.Selected
 import dev.jamesyox.svgk.TagConsumer
 import dev.jamesyox.svgk.attr.strokeOpacity
+import dev.jamesyox.svgk.attr.types.obj.pct
 import dev.jamesyox.svgk.attrs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.w3c.dom.svg.SVGElement
+import kotlin.time.Instant
 
 private const val MOON_UP_COLOR = "#ffffff"
 private const val MOON_DOWN_COLOR = "#2f4f4f"
 
+context(coroutineScope: CoroutineScope)
 fun TagConsumer<SVGElement>.LunarHorizonSpanner(
     radius: Double,
     timeRange: ClosedRange<Instant>,
     lunarHorizonState: List<LunarHorizonState>,
-    coroutineScope: CoroutineScope,
     selected: Flow<Selected.SelectedState?>,
     onClick: (LunarHorizonState) -> Unit
 ) {
@@ -57,7 +58,7 @@ fun TagConsumer<SVGElement>.LunarHorizonSpanner(
         selected.collect { selectedState ->
             elements.forEach { mapEntry ->
                 mapEntry.value.attrs {
-                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState)
+                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState).pct
                 }
             }
         }

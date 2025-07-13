@@ -28,22 +28,24 @@ import dev.jamesyox.kastro.luna.LunarHorizonEventSequence
 import dev.jamesyox.kastro.sol.SolarEvent
 import dev.jamesyox.kastro.sol.SolarEventSequence
 import dev.jamesyox.kastro.sol.SolarEventType
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toDeprecatedInstant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Instant
 
 data class CelestialParameters(
     val location: Location,
     val timeZone: TimeZone,
+    val height: Double, // In Meters
     val date: LocalDate
 ) {
     val start = date.atStartOfDayIn(timeZone)
     val timeRange = start..(start + 1.days)
     val lunarEvents = LunarEventSequence(
-        start = timeRange.start,
+        start = timeRange.start.toDeprecatedInstant(),
         location = location.asPair(),
         limit = timeRange.endInclusive - timeRange.start,
         requestedLunarEvents = LunarEvent.all
@@ -52,10 +54,11 @@ data class CelestialParameters(
         .toList()
         .lunarHorizonState(timeRange, location.asPair())
     val solarEvents = SolarEventSequence(
-        start = timeRange.start,
+        start = timeRange.start.toDeprecatedInstant(),
         location = location.asPair(),
         limit = timeRange.endInclusive - timeRange.start,
-        requestedSolarEvents = SolarEventType.all
+        requestedSolarEvents = SolarEventType.all,
+        height = height
     ).toList()
 
     val solarPhaseStates = solarEvents.solarPhaseStates(timeRange, location.asPair())
@@ -64,16 +67,17 @@ data class CelestialParameters(
 
 fun nextSolarHorizonEvent(parameters: CelestialParameters, time: Instant): Iterator<SolarEvent> {
     return SolarEventSequence(
-        start = time,
+        start = time.toDeprecatedInstant(),
         location = parameters.location.asPair(),
         limit = Duration.INFINITE,
-        requestedSolarEvents = listOf(SolarEvent.Sunrise, SolarEvent.Sunset)
+        requestedSolarEvents = listOf(SolarEvent.Sunrise, SolarEvent.Sunset),
+        height = parameters.height
     ).iterator()
 }
 
 fun nextLunarHorizonEvent(parameters: CelestialParameters, time: Instant): Iterator<LunarEvent> {
     return LunarHorizonEventSequence(
-        start = time,
+        start = time.toDeprecatedInstant(),
         location = parameters.location.asPair(),
         limit = Duration.INFINITE
     ).iterator()

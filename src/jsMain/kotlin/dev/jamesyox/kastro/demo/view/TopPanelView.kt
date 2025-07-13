@@ -71,10 +71,10 @@ sealed interface TopPanelEvent {
     ) : TopPanelEvent
 }
 
+context(_: CoroutineScope)
 fun TagConsumer<HTMLElement>.TopPanel(
     stylesheet: KastroDemoStylesheet,
     globalState: GlobalState,
-    coroutineScope: CoroutineScope,
     onEvent: (TopPanelEvent) -> Unit
 ): HTMLElement {
     val topPanelState = globalState.topPanelState
@@ -89,7 +89,6 @@ fun TagConsumer<HTMLElement>.TopPanel(
         }
 
         val inputPanel = InputPanel(
-            coroutineScope = coroutineScope,
             parameters = globalState.paramsState.value,
             mapUpdates = globalState.nonManualUpdates,
             paramsState = globalState.paramsState
@@ -101,7 +100,6 @@ fun TagConsumer<HTMLElement>.TopPanel(
             CelsetialClockComponent(
                 state = globalState.celestialClockState,
                 selected = globalState.focusedItem,
-                coroutineScope = coroutineScope,
             ) {
                 onEvent(TopPanelEvent.ClockEvent(it))
             }
@@ -125,7 +123,6 @@ fun TagConsumer<HTMLElement>.TopPanel(
                 }
                 src = "settings.svg"
             }.settingAttribute(
-                coroutineScope = coroutineScope,
                 qualifiedName = "src",
                 values = topPanelState.map { state ->
                     when (state) {
@@ -138,7 +135,6 @@ fun TagConsumer<HTMLElement>.TopPanel(
         }
 
         inputPanel.mountClass(
-            coroutineScope,
             topPanelState.map {
                 when (it) {
                     TopPanelState.Settings -> stylesheet.inputPanelActive
@@ -148,7 +144,6 @@ fun TagConsumer<HTMLElement>.TopPanel(
         )
 
         celestialClock.mountClass(
-            coroutineScope,
             topPanelState.map {
                 when (it) {
                     TopPanelState.Clock -> stylesheet.inputPanelActive

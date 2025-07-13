@@ -24,7 +24,7 @@ import dev.jamesyox.kastro.demo.misc.url
 import dev.jamesyox.kastro.demo.svgk.js.svgMagick
 import dev.jamesyox.kastro.demo.values
 import dev.jamesyox.statik.css
-import dev.jamesyox.svgk.attr.objs.ViewBox
+import dev.jamesyox.svgk.attr.types.obj.ViewBox
 import dev.jamesyox.svgk.tags.path
 import dev.jamesyox.svgk.tags.svg
 import kotlinx.coroutines.CoroutineScope
@@ -73,11 +73,12 @@ import kotlinx.html.js.td
 import kotlinx.html.js.tr
 import kotlinx.html.label
 import org.w3c.dom.HTMLElement
+import web.clipboard.writeText
 import web.navigator.navigator
 import kotlin.time.Duration.Companion.seconds
 
+context(_: CoroutineScope)
 fun TagConsumer<HTMLElement>.InputPanel(
-    coroutineScope: CoroutineScope,
     parameters: CelestialParameters,
     mapUpdates: Flow<Location>,
     paramsState: StateFlow<CelestialParameters>,
@@ -89,18 +90,19 @@ fun TagConsumer<HTMLElement>.InputPanel(
                 paddingBottom = 12.px
             }
             LatitudeInput(
-                coroutineScope = coroutineScope,
                 initialValue = parameters.location.latitude,
                 value = mapUpdates.map { it.latitude }
             ) {
                 onEvent(InputPanelEvent.LatitudeUpdate(it))
             }
             LongitudeInput(
-                coroutineScope = coroutineScope,
                 initialValue = parameters.location.longitude,
                 value = mapUpdates.map { it.longitude }
             ) {
                 onEvent(InputPanelEvent.LongitudeUpdate(it))
+            }
+            HeightInput(parameters.height) {
+                onEvent(InputPanelEvent.HeightChange(it))
             }
             DateInput(parameters.date) {
                 onEvent(InputPanelEvent.DateChange(it))
@@ -117,13 +119,11 @@ fun TagConsumer<HTMLElement>.InputPanel(
                 marginBottom = 12.px
             }
             CopyButton(
-                coroutineScope = coroutineScope,
                 paramState = paramsState,
                 text = "Copy Location Link",
                 withDate = false
             )
             CopyButton(
-                coroutineScope = coroutineScope,
                 paramState = paramsState,
                 text = "Copy Full Link",
                 withDate = true
@@ -173,8 +173,8 @@ fun TagConsumer<HTMLElement>.InputPanel(
     }
 }
 
+context(coroutineScope: CoroutineScope)
 private fun TagConsumer<HTMLElement>.CopyButton(
-    coroutineScope: CoroutineScope,
     paramState: StateFlow<CelestialParameters>,
     text: String,
     withDate: Boolean
@@ -210,6 +210,10 @@ sealed interface InputPanelEvent {
         val date: LocalDate
     ) : ManualEvent
 
+    value class HeightChange(
+        val height: Double
+    ) : ManualEvent
+
     data object GeolocationRequest : InputPanelEvent
 }
 
@@ -243,8 +247,8 @@ private fun TagConsumer<HTMLElement>.DateInput(
     }
 }
 
+context(coroutineScope: CoroutineScope)
 private fun TagConsumer<HTMLElement>.LatitudeInput(
-    coroutineScope: CoroutineScope,
     initialValue: Double,
     value: Flow<Double>,
     onChange: (Double) -> Unit
@@ -268,13 +272,13 @@ private fun TagConsumer<HTMLElement>.LatitudeInput(
                 }
                 max = "90"
                 min = "-90"
-            }.values(coroutineScope = coroutineScope, value.map { it.toString() })
+            }.values(value.map { it.toString() })
         }
     }
 }
 
+context(coroutineScope: CoroutineScope)
 private fun TagConsumer<HTMLElement>.LongitudeInput(
-    coroutineScope: CoroutineScope,
     initialValue: Double,
     value: Flow<Double>,
     onChange: (Double) -> Unit
@@ -298,7 +302,36 @@ private fun TagConsumer<HTMLElement>.LongitudeInput(
                 }
                 max = "180"
                 min = "-180"
-            }.values(coroutineScope, value.map { it.toString() })
+            }.values(value.map { it.toString() })
+        }
+    }
+}
+
+context(coroutineScope: CoroutineScope)
+private fun TagConsumer<HTMLElement>.HeightInput(
+    initialValue: Double,
+    onChange: (Double) -> Unit
+) {
+    tr {
+        td {
+            label { +"Height (meters):" }
+        }
+        td {
+            input {
+                css {
+                    width = 10.em
+                }
+                this.type = InputType.number
+                this.value = initialValue.toString()
+                onInputFunction = {
+                    (it.target.asDynamic().value as String)
+                        .toDoubleOrNull()
+                        ?.coerceIn(-180.0..180.0)
+                        ?.also(onChange)
+                }
+
+                min = "0"
+            }
         }
     }
 }

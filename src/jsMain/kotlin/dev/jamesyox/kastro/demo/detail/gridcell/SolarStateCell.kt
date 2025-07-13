@@ -28,7 +28,7 @@ import dev.jamesyox.kastro.demo.sol.prettyString
 import dev.jamesyox.kastro.demo.svgk.js.svgMagick
 import dev.jamesyox.kastro.sol.SolarState
 import dev.jamesyox.statik.css
-import dev.jamesyox.svgk.attr.objs.ViewBox
+import dev.jamesyox.svgk.attr.types.obj.ViewBox
 import dev.jamesyox.svgk.tags.circle
 import dev.jamesyox.svgk.tags.svg
 import kotlinx.coroutines.CoroutineScope
@@ -64,13 +64,10 @@ import kotlinx.html.th
 import kotlinx.html.tr
 import org.w3c.dom.HTMLElement
 
-fun TagConsumer<HTMLElement>.SolarStateCell(
-    coroutineScope: CoroutineScope,
-    globalState: GlobalState,
-) {
+context(_: CoroutineScope)
+fun TagConsumer<HTMLElement>.SolarStateCell(globalState: GlobalState) {
     return CurrentStateCell()
         .replacingInnerHTML(
-            coroutineScope,
             globalState.solarState.map { SolarStateCell(it, globalState) }
         )
 }
@@ -114,8 +111,9 @@ private fun SolarStateCell(
                 +"Sun"
             }
             p { }.apply {
-                val coroutineScope = domCoroutineScope()
-                replacingInnerText(coroutineScope, globalState.solarCountDownContent)
+                context(domCoroutineScope()) {
+                    replacingInnerText(globalState.solarCountDownContent)
+                }
             }
         }
     }

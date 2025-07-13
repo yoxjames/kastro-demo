@@ -30,7 +30,7 @@ fun TagConsumer<HTMLElement>.TwilightCell(
     GridCell {
         h3 { +"Occurs When" }
         p {
-            +"The solar angle is between ${twilight.angleRange.start} and ${twilight.angleRange.endInclusive} "
+            +"The solar angle is between ${twilight.angleRange.start}° and ${twilight.angleRange.endInclusive}° "
             +"relative to the horizon during ${twilight.phaseType.name.lowercase()}"
         }
     }

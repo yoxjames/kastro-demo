@@ -28,10 +28,10 @@ import dev.jamesyox.kastro.demo.sol.prettyString
 import dev.jamesyox.kastro.sol.Twilight
 import kotlinx.datetime.TimeZone
 
+context(_: TimeZone)
 fun SolarStateDetailView(
     description: String,
     solarPhaseState: SolarPhaseState,
-    timeZone: TimeZone,
     onEvent: (SolarStateDetailViewEvent) -> Unit
 ) = htmlContent {
     DetailView(
@@ -41,19 +41,11 @@ fun SolarStateDetailView(
     ) {
         val startEvent = solarPhaseState.startEvent?.let { it::class.simpleName }
         if (startEvent != null) {
-            StartsCell(
-                timeZone = timeZone,
-                time = solarPhaseState.start,
-                startEventName = startEvent
-            )
+            StartsCell(time = solarPhaseState.start, startEventName = startEvent)
         }
         val endEvent = solarPhaseState.endEvent?.let { it::class.simpleName }
         if (endEvent != null) {
-            EndsCell(
-                timeZone = timeZone,
-                time = solarPhaseState.end,
-                endEventName = endEvent
-            )
+            EndsCell(time = solarPhaseState.end, endEventName = endEvent)
         }
         if (startEvent != null && endEvent != null) {
             DurationCell(solarPhaseState.end - solarPhaseState.start)

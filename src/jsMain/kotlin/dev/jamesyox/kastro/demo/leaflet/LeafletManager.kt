@@ -23,7 +23,8 @@ import dev.jamesyox.kastro.demo.misc.Location
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
-import web.dom.observers.ResizeObserver
+import web.dom.ElementId
+import web.resize.ResizeObserver
 import kotlin.js.Promise
 import kotlin.js.json
 import kotlin.math.roundToInt
@@ -63,7 +64,7 @@ class LeafletManager(
                 ).addTo(map)
 
                 map.on("moveend") { moveListener(map) }
-                val mapElement = web.dom.document.getElementById("map")!!
+                val mapElement = web.dom.document.getElementById(ElementId("map"))!!
                 val resizeObserver = ResizeObserver { _, _ ->
                     map.invalidateSize()
                     Unit

@@ -31,10 +31,10 @@ sealed interface LightStateDetailViewEvent {
     data object BackClicked : LightStateDetailViewEvent
 }
 
+context(_: TimeZone)
 fun LightStateDetailView(
     description: String,
     solarLightState: SolarLightState,
-    timeZone: TimeZone,
     onEvent: (LightStateDetailViewEvent) -> Unit
 ) = htmlContent {
     DetailView(
@@ -44,19 +44,11 @@ fun LightStateDetailView(
     ) {
         val startEvent = solarLightState.startEvent?.let { it::class.simpleName }
         if (startEvent != null) {
-            StartsCell(
-                timeZone = timeZone,
-                time = solarLightState.start,
-                startEventName = startEvent
-            )
+            StartsCell(time = solarLightState.start, startEventName = startEvent)
         }
         val endEvent = solarLightState.endEvent?.let { it::class.simpleName }
         if (endEvent != null) {
-            EndsCell(
-                timeZone = timeZone,
-                time = solarLightState.end,
-                endEventName = endEvent
-            )
+            EndsCell(time = solarLightState.end, endEventName = endEvent)
         }
         if (startEvent != null && endEvent != null) {
             DurationCell(solarLightState.end - solarLightState.start)

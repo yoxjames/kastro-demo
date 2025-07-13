@@ -24,10 +24,10 @@ import dev.jamesyox.svgk.attr.enums.DominantBaseline
 import dev.jamesyox.svgk.attr.enums.TextAnchor
 import dev.jamesyox.svgk.tags.path
 import dev.jamesyox.svgk.tags.text
-import kotlinx.datetime.Instant
 import org.w3c.dom.svg.SVGElement
 import kotlin.math.PI
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
 
 fun TagConsumer<SVGElement>.ClockOverlay(
     radius: Double,

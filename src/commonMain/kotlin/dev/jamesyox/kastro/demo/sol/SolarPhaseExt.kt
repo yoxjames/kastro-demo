@@ -19,7 +19,6 @@ package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.SolarPhase
 import dev.jamesyox.kastro.sol.Twilight
-import dev.jamesyox.statik.text.StaticTextAgreement
 
 val SolarPhase.prettyString get() = when (this) {
     SolarPhase.AstronomicalDawn -> "Astronomical Dawn"
@@ -33,14 +32,14 @@ val SolarPhase.prettyString get() = when (this) {
 }
 
 val SolarPhase.description get() = when (this) {
-    SolarPhase.Night -> StaticTextAgreement("strings/solarPhase/night.txt")
-    SolarPhase.AstronomicalDawn -> StaticTextAgreement("strings/solarPhase/astronomical_dawn.txt")
-    SolarPhase.NauticalDawn -> StaticTextAgreement("strings/solarPhase/nautical_dawn.txt")
-    SolarPhase.CivilDawn -> StaticTextAgreement("strings/solarPhase/civil_dawn.txt")
-    SolarPhase.Day -> StaticTextAgreement("strings/solarPhase/day.txt")
-    SolarPhase.CivilDusk -> StaticTextAgreement("strings/solarPhase/civil_dusk.txt")
-    SolarPhase.NauticalDusk -> StaticTextAgreement("strings/solarPhase/nautical_dusk.txt")
-    SolarPhase.AstronomicalDusk -> StaticTextAgreement("strings/solarPhase/astronomical_dusk.txt")
+    SolarPhase.Night -> "strings/solarPhase/night.txt"
+    SolarPhase.AstronomicalDawn -> "strings/solarPhase/astronomical_dawn.txt"
+    SolarPhase.NauticalDawn -> "strings/solarPhase/nautical_dawn.txt"
+    SolarPhase.CivilDawn -> "strings/solarPhase/civil_dawn.txt"
+    SolarPhase.Day -> "strings/solarPhase/day.txt"
+    SolarPhase.CivilDusk -> "strings/solarPhase/civil_dusk.txt"
+    SolarPhase.NauticalDusk -> "strings/solarPhase/nautical_dusk.txt"
+    SolarPhase.AstronomicalDusk -> "strings/solarPhase/astronomical_dusk.txt"
 }
 
 val SolarPhase.stroke get() = when (this) {

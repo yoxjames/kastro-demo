@@ -27,4 +27,8 @@ sealed interface CelestialParametersUpdate {
     value class DateUpdate(
         val date: LocalDate
     ) : CelestialParametersUpdate
+
+    value class HeightUpdate(
+        val height: Double
+    ) : CelestialParametersUpdate
 }

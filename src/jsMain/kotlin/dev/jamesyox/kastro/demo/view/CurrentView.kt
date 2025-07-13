@@ -40,10 +40,8 @@ import kotlinx.css.px
 import kotlinx.css.rowGap
 import kotlinx.html.js.div
 
-fun CurrentView(
-    coroutineScope: CoroutineScope,
-    globalState: GlobalState,
-) = htmlContent {
+context(_: CoroutineScope)
+fun CurrentView(globalState: GlobalState) = htmlContent {
     div {
         css {
             padding = Padding(16.px)
@@ -55,7 +53,7 @@ fun CurrentView(
             columnGap = 12.px
             rowGap = 12.px
         }
-        SolarStateCell(coroutineScope, globalState)
-        LunarStateCell(coroutineScope, globalState)
+        SolarStateCell(globalState)
+        LunarStateCell(globalState)
     }
 }

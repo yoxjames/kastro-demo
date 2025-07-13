@@ -103,24 +103,24 @@ display: none;
 display: block;
 }
 }
-.event-table-row:hover {
-background-color: #00abff;
-color: black;
-}
 .event-table-row {
 height: 50px;
 border: 0 none transparent;
 background-color: inherit;
 color: white;
+&:hover {
+background-color: #00abff;
+color: black;
+}
 }
 .state-table {
 width: 100%;
 border-collapse: collapse;
 }
-.state-table-row:hover {
-opacity: 1.0;
-}
 .state-table-row {
 height: 50px;
 opacity: 0.85;
+&:hover {
+opacity: 1.0;
+}
 }

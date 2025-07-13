@@ -34,10 +34,10 @@ import kotlinx.html.js.button
 import kotlinx.html.js.onClickFunction
 import org.w3c.dom.HTMLElement
 
+context(_: CoroutineScope)
 fun TagConsumer<HTMLElement>.TabView(
     stylesheet: KastroDemoStylesheet,
     selectedTab: StateFlow<TableType>,
-    coroutineScope: CoroutineScope,
     onSelectTab: (TableType) -> Unit
 ) {
     div {
@@ -53,7 +53,7 @@ fun TagConsumer<HTMLElement>.TabView(
                 classSelector(stylesheet.inactiveTab)
                 +tab.name
                 onClickFunction = { onSelectTab(tab) }
-            }.mountClass(coroutineScope, cssClass)
+            }.mountClass(cssClass)
         }
     }
 }

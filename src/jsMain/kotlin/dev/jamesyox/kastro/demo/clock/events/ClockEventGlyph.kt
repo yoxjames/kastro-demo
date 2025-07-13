@@ -27,9 +27,9 @@ import dev.jamesyox.svgk.tags.g
 import kotlinx.css.Padding
 import kotlinx.css.padding
 import kotlinx.css.px
-import kotlinx.datetime.Instant
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.svg.SVGElement
+import kotlin.time.Instant
 
 fun TagConsumer<SVGElement>.ClockEventGlyph(
     distance: Double,

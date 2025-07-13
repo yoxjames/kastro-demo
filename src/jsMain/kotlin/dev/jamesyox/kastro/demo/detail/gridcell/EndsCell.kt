@@ -18,7 +18,6 @@
 package dev.jamesyox.kastro.demo.detail.gridcell
 
 import dev.jamesyox.kastro.demo.prettyString
-import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.html.TagConsumer
@@ -27,9 +26,10 @@ import kotlinx.html.code
 import kotlinx.html.h3
 import kotlinx.html.p
 import org.w3c.dom.HTMLElement
+import kotlin.time.Instant
 
+context(timeZone: TimeZone)
 fun TagConsumer<HTMLElement>.EndsCell(
-    timeZone: TimeZone,
     time: Instant,
     endEventName: String,
 ) {

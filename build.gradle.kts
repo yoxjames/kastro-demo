@@ -15,14 +15,16 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import io.gitlab.arturbosch.detekt.Detekt
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.detekt)
     alias(libs.plugins.benmanes.versions)
-    application
 }
 
 group = "dev.jamesyox"
@@ -45,7 +47,14 @@ detekt {
 
 kotlin {
     jvm {
-        withJava()
+        mainRun {
+            mainClass.set("dev.jamesyox.kastro.demo.MainKt")
+        }
+        binaries {
+            executable {
+                mainClass.set("dev.jamesyox.kastro.demo.MainKt")
+            }
+        }
     }
     js {
         useEsModules()
@@ -57,7 +66,11 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        all {
+            languageSettings.enableLanguageFeature("ContextParameters")
+            languageSettings.optIn("kotlin.time.ExperimentalTime")
+        }
+        commonMain {
             dependencies {
                 implementation(libs.kastro)
                 implementation(libs.kotlinx.datetime)
@@ -66,13 +79,13 @@ kotlin {
                 implementation(libs.jamesyox.statik)
             }
         }
-        val jsMain by getting {
+        jsMain {
             dependencies {
                 implementation(npm(name = "leaflet", version = "1.9.4"))
                 implementation(libs.kotlin.js.browser)
             }
         }
-        val jvmMain by getting
+        jvmMain
     }
 }
 
@@ -82,26 +95,9 @@ tasks.register("allDetekt") {
     }
 }
 
-tasks.named<JavaExec>("run") {
-    dependsOn(
-        tasks.named<Jar>("jvmJar"),
-        tasks.named<Copy>("copyJsStatikContent")
-    )
-    classpath(tasks.getByName<Jar>("jvmJar"))
-}
 
-// include JS artifacts in any generated JAR
 tasks.getByName<Jar>("jvmJar") {
-    val taskName = if (project.hasProperty("isProduction")
-        || project.gradle.startParameter.taskNames.contains("installDist")
-    ) {
-        "jsBrowserProductionWebpack"
-    } else {
-        "jsBrowserDevelopmentWebpack"
-    }
-    val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
-    dependsOn(webpackTask) // make sure JS gets compiled first
-    from(webpackTask.outputDirectory.asFile.get()) // bring output file along into the JAR
+    dependsOn("copyJsStatikContent")
 }
 
 tasks.register<Copy>("copyJsStatikContent") {
@@ -116,10 +112,6 @@ tasks.register<Copy>("copyJsStatikContent") {
     dependsOn(webpackTask) // make sure JS gets compiled first
     from(webpackTask.outputDirectory.asFile.get())
     into("docs/.")
-}
-
-application {
-    mainClass.set("dev.jamesyox.kastro.demo.MainKt")
 }
 
 fun String.isNonStable(): Boolean {

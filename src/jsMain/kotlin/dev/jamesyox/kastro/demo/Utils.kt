@@ -22,7 +22,7 @@ import dev.jamesyox.kastro.demo.sol.SolarLightState
 import dev.jamesyox.kastro.demo.sol.SolarPhaseState
 import dev.jamesyox.kastro.demo.svgk.Selected
 import dev.jamesyox.statik.css
-import dev.jamesyox.statik.css.ClassSelector
+import dev.jamesyox.statik.css.Selector
 import dev.jamesyox.svgk.JsDomTagConsumer
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlinx.css.StyledElement
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
@@ -49,17 +48,21 @@ import org.w3c.dom.Node
 import org.w3c.dom.asList
 import org.w3c.dom.svg.SVGElement
 import kotlin.math.roundToInt
+import kotlin.time.Instant
 
 fun SolarPhaseState.calculateOpacity(selected: Selected.SelectedState?): Double {
-    return selected?.let { if (it is Selected.SelectedState.Solar && it.solarPhaseState == this) 1.0 else 0.3 } ?: 1.0
+    return selected?.let { if (it is Selected.SelectedState.Solar && it.solarPhaseState == this) 100.0 else 30.0 }
+        ?: 100.0
 }
 
 fun SolarLightState.calculateOpacity(selected: Selected.SelectedState?): Double {
-    return selected?.let { if (it is Selected.SelectedState.Light && it.solarLightState == this) 1.0 else 0.3 } ?: 1.0
+    return selected?.let { if (it is Selected.SelectedState.Light && it.solarLightState == this) 100.0 else 30.0 }
+        ?: 100.0
 }
 
 fun LunarHorizonState.calculateOpacity(selected: Selected.SelectedState?): Double {
-    return selected?.let { if (it is Selected.SelectedState.Lunar && it.lunarPhaseState == this) 1.0 else 0.3 } ?: 1.0
+    return selected?.let { if (it is Selected.SelectedState.Lunar && it.lunarPhaseState == this) 100.0 else 30.0 }
+        ?: 100.0
 }
 
 fun <T, K> List<T>.distinctUntilChangedBy(keySelector: (T) -> K): List<T> {
@@ -118,21 +121,19 @@ fun svgContent(block: dev.jamesyox.svgk.TagConsumer<SVGElement>.() -> Unit): Lis
     return JsDomTagConsumer(document).apply(block).output()
 }
 
-suspend fun Flow<List<Element>>.mountTo(element: Element) {
-    collect {
-        element.replace(it)
+context(coroutineScope: CoroutineScope)
+fun Flow<List<Element>>.insertingBefore(node: Element, child: Node?) {
+    coroutineScope.launch {
+        scan(Pair(emptyList<Element>(), emptyList<Element>())) { acc, elementList -> Pair(acc.second, elementList) }
+            .collect { elementPairs ->
+                elementPairs.first.forEach { node.removeChild(it) }
+                elementPairs.second.forEach { node.insertBefore(it, child) }
+            }
     }
 }
 
-suspend fun Flow<List<Element>>.insertingBefore(node: Element, child: Node?) {
-    scan(Pair(emptyList<Element>(), emptyList<Element>())) { acc, elementList -> Pair(acc.second, elementList) }
-        .collect { elementPairs ->
-            elementPairs.first.forEach { node.removeChild(it) }
-            elementPairs.second.forEach { node.insertBefore(it, child) }
-        }
-}
-
-fun Element.replacingInnerHTML(coroutineScope: CoroutineScope, flow: Flow<List<HTMLElement>>) {
+context(coroutineScope: CoroutineScope)
+fun Element.replacingInnerHTML(flow: Flow<List<HTMLElement>>) {
     coroutineScope.launch {
         flow.collect {
             innerHTML = ""
@@ -141,18 +142,22 @@ fun Element.replacingInnerHTML(coroutineScope: CoroutineScope, flow: Flow<List<H
     }
 }
 
-fun HTMLElement.replacingInnerText(coroutineScope: CoroutineScope, flow: Flow<String>) {
+context(coroutineScope: CoroutineScope)
+fun HTMLElement.replacingInnerText(flow: Flow<String>) {
     coroutineScope.launch { flow.collect { innerText = it } }
 }
 
-fun Flow<List<Element>>.mountTo(coroutineScope: CoroutineScope, element: Element) {
+context(coroutineScope: CoroutineScope)
+fun Flow<List<Element>>.mountTo(element: Element) {
     coroutineScope.launch {
-        mountTo(element)
+        collect {
+            element.replace(it)
+        }
     }
 }
 
+context(coroutineScope: CoroutineScope)
 fun Element.settingAttribute(
-    coroutineScope: CoroutineScope,
     qualifiedName: String,
     values: Flow<String>
 ) {
@@ -174,17 +179,20 @@ fun Element.domCoroutineScope(): CoroutineScope {
     return coroutineScope
 }
 
-fun HTMLElement.mountCss(coroutineScope: CoroutineScope, flow: Flow<StyledElement?>) {
+context(coroutineScope: CoroutineScope)
+fun HTMLElement.mountCss(flow: Flow<StyledElement?>) {
     coroutineScope.launch { flow.collect { if (it != null) css(it) } }
 }
 
-fun HTMLElement.values(coroutineScope: CoroutineScope, flow: Flow<String>) {
+context(coroutineScope: CoroutineScope)
+fun HTMLElement.values(flow: Flow<String>) {
     coroutineScope.launch {
         flow.collect { this@values.asDynamic().value = it }
     }
 }
 
-fun HTMLElement.mountClasses(coroutineScope: CoroutineScope, flow: Flow<List<ClassSelector>>) {
+context(coroutineScope: CoroutineScope)
+fun HTMLElement.mountClasses(flow: Flow<List<Selector.Class>>) {
     coroutineScope.launch {
         flow.collect {
             className = ""
@@ -193,8 +201,9 @@ fun HTMLElement.mountClasses(coroutineScope: CoroutineScope, flow: Flow<List<Cla
     }
 }
 
-fun HTMLElement.mountClass(coroutineScope: CoroutineScope, flow: Flow<ClassSelector>) {
-    mountClasses(coroutineScope, flow.map { listOf(it) })
+context(_: CoroutineScope)
+fun HTMLElement.mountClass(flow: Flow<Selector.Class>) {
+    mountClasses(flow.map { listOf(it) })
 }
 
 internal fun LocalTime.prettyString(): String {

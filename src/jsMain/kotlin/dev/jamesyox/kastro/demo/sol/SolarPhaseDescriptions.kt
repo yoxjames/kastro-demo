@@ -19,22 +19,25 @@ package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.LightState
 import dev.jamesyox.kastro.sol.SolarPhase
-import dev.jamesyox.statik.text.promise
+import js.promise.Promise
+import web.http.fetchAsync
 
 object SolarPhaseDescriptions {
-    val night = SolarPhase.Night.description.promise()
-    val astronomicalDawn = SolarPhase.AstronomicalDawn.description.promise()
-    val nauticalDawn = SolarPhase.NauticalDawn.description.promise()
-    val civilDawn = SolarPhase.CivilDawn.description.promise()
-    val day = SolarPhase.Day.description.promise()
-    val civilDusk = SolarPhase.CivilDusk.description.promise()
-    val nauticalDusk = SolarPhase.NauticalDusk.description.promise()
-    val astronomicalDusk = SolarPhase.AstronomicalDusk.description.promise()
+    val night = SolarPhase.Night.description.fetchText()
+    val astronomicalDawn = SolarPhase.AstronomicalDawn.description.fetchText()
+    val nauticalDawn = SolarPhase.NauticalDawn.description.fetchText()
+    val civilDawn = SolarPhase.CivilDawn.description.fetchText()
+    val day = SolarPhase.Day.description.fetchText()
+    val civilDusk = SolarPhase.CivilDusk.description.fetchText()
+    val nauticalDusk = SolarPhase.NauticalDusk.description.fetchText()
+    val astronomicalDusk = SolarPhase.AstronomicalDusk.description.fetchText()
 }
 
 object SolarLightDescriptions {
-    val blueHourDawn = LightState.BlueHourDawn.description.promise()
-    val blueHourDusk = LightState.BlueHourDusk.description.promise()
-    val goldenHourDawn = LightState.GoldenHourDawn.description.promise()
-    val goldenHourDusk = LightState.GoldenHourDusk.description.promise()
+    val blueHourDawn = LightState.BlueHourDawn.description.fetchText()
+    val blueHourDusk = LightState.BlueHourDusk.description.fetchText()
+    val goldenHourDawn = LightState.GoldenHourDawn.description.fetchText()
+    val goldenHourDusk = LightState.GoldenHourDusk.description.fetchText()
 }
+
+private fun String.fetchText(): Promise<String> =  fetchAsync(this).flatThen { it.textAsync() }

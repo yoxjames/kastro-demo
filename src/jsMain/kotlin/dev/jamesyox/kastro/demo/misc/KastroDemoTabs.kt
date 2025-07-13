@@ -35,8 +35,8 @@ data class KastroDemoTabs(
     val aboutTab: List<HTMLElement>,
 )
 
+context(_: CoroutineScope)
 fun CelestialParameters.html(
-    coroutineScope: CoroutineScope,
     stylesheet: KastroDemoStylesheet,
     globalState: GlobalState,
     onEvent: (ListViewEvent) -> Unit
@@ -60,7 +60,6 @@ fun CelestialParameters.html(
             onEvent(ListViewEvent.EventsView(it))
         },
         currentTab = CurrentView(
-            coroutineScope = coroutineScope,
             globalState = globalState
         ),
         aboutTab = AboutView()

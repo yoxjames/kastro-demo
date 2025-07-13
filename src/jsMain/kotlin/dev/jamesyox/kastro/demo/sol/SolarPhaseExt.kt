@@ -18,7 +18,7 @@
 package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.SolarPhase
-import kotlinx.coroutines.await
+import js.promise.await
 
 suspend fun SolarPhase.description(strings: SolarPhaseDescriptions): String = when (this) {
     SolarPhase.AstronomicalDawn -> strings.astronomicalDawn.await()

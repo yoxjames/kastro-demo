@@ -64,13 +64,10 @@ import kotlinx.html.th
 import kotlinx.html.tr
 import org.w3c.dom.HTMLElement
 
-fun TagConsumer<HTMLElement>.LunarStateCell(
-    coroutineScope: CoroutineScope,
-    globalState: GlobalState,
-) {
+context(_: CoroutineScope)
+fun TagConsumer<HTMLElement>.LunarStateCell(globalState: GlobalState) {
     return CurrentStateCell()
         .replacingInnerHTML(
-            coroutineScope,
             globalState.lunarState.map {
                 LunarStateCell(it, globalState)
             }
@@ -113,8 +110,9 @@ private fun LunarStateCell(
                 +"Moon"
             }
             p { }.apply {
-                val coroutineScope = domCoroutineScope()
-                replacingInnerText(coroutineScope, globalState.lunarCountDownContent)
+                context(domCoroutineScope()) {
+                    replacingInnerText(globalState.lunarCountDownContent)
+                }
             }
         }
     }

@@ -19,7 +19,7 @@ package dev.jamesyox.kastro.demo
 
 import dev.jamesyox.kastro.demo.sol.SolarLightDescriptions
 import dev.jamesyox.kastro.sol.LightState
-import kotlinx.coroutines.await
+import js.promise.await
 
 suspend fun LightState.description(strings: SolarLightDescriptions) = when (this) {
     LightState.BlueHourDawn -> strings.blueHourDawn.await()

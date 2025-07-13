@@ -19,17 +19,21 @@ package dev.jamesyox.kastro.demo.misc
 
 import dev.jamesyox.kastro.demo.CelestialParameters
 import kotlinx.browser.window
-import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDate
 import kotlinx.datetime.toLocalDateTime
 import web.url.URLSearchParams
+import kotlin.time.Clock
 
 private const val LATITUDE_KEY = "latitude"
 private const val LONGITUDE_KEY = "longitude"
 private const val DATE_KEY = "date"
+private const val HEIGHT_KEY = "height"
 
-class UrlParamsParser(clock: Clock, timeZone: TimeZone) {
+class UrlParamsParser(
+    clock: Clock,
+    private val timeZone: TimeZone
+) {
     val startingParams get() = getUrlParams() ?: defaultDenverParams
 
     private val denver = Location(latitude = 39.749618, longitude = -104.988892)
@@ -37,24 +41,27 @@ class UrlParamsParser(clock: Clock, timeZone: TimeZone) {
     private val defaultDenverParams = CelestialParameters(
         location = denver,
         timeZone = timeZone,
-        date = clock.now().toLocalDateTime(timeZone).date
+        date = clock.now().toLocalDateTime(timeZone).date,
+        height = 0.0
     )
+
 
     private fun getUrlParams(): CelestialParameters? {
         val search = window.location.search
-        return URLSearchParams(search).extractParams()
+        return URLSearchParams(search).extractParams(timeZone)
     }
 
     @Suppress("ReturnCount")
-    private fun URLSearchParams.extractParams(): CelestialParameters? {
-        val date = this[DATE_KEY]?.toLocalDate() ?: defaultDenverParams.date
+    private fun URLSearchParams.extractParams(timeZone: TimeZone): CelestialParameters? {
+        val date = get(DATE_KEY)?.let { LocalDate.parse(it) } ?: defaultDenverParams.date
         return CelestialParameters(
             location = Location(
-                latitude = this[LATITUDE_KEY]?.toDouble() ?: return null,
-                longitude = this[LONGITUDE_KEY]?.toDouble() ?: return null
+                latitude = get(LATITUDE_KEY)?.toDouble() ?: return null,
+                longitude = get(LONGITUDE_KEY)?.toDouble() ?: return null
             ),
             date = date,
-            timeZone = TimeZone.currentSystemDefault()
+            height = get(HEIGHT_KEY)?.toDouble() ?: return null,
+            timeZone = timeZone
         )
     }
 }

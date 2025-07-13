@@ -23,40 +23,38 @@ import dev.jamesyox.kastro.demo.misc.UrlParamsParser
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.html.dom.append
-
-private val clock = Clock.System
-private val timeZone = TimeZone.currentSystemDefault()
-private val coroutineScope = CoroutineScope(Dispatchers.Default)
+import kotlin.time.Clock
 
 fun main() {
-    val urlParamsParser = UrlParamsParser(clock = clock, timeZone = timeZone)
-    val globalState = GlobalState(
-        clock = clock,
-        startingParams = urlParamsParser.startingParams,
-        appScope = coroutineScope
-    )
+    context(Clock.System, TimeZone.currentSystemDefault(), CoroutineScope(Dispatchers.Default)) {
+        val urlParamsParser = UrlParamsParser(
+            contextOf<Clock>(),
+            contextOf<TimeZone>()
+        )
+        val globalState = GlobalState(
+            contextOf<Clock>(),
+            startingParams = urlParamsParser.startingParams,
+            appScope = contextOf<CoroutineScope>()
+        )
+        with(document) {
+            getElementById("kastro-demo-container")?.append {
+                AppView(
+                    stylesheet = KastroDemoStylesheetAgreement,
+                    globalState = globalState,
+                )
+            }
 
-    with(document) {
-        getElementById("kastro-demo-container")?.append {
-            AppView(
-                stylesheet = KastroDemoStylesheetAgreement,
-                appScope = coroutineScope,
-                globalState = globalState,
-                timeZone = timeZone
-            )
+            LeafletManager(
+                coroutineScope = contextOf<CoroutineScope>(),
+                globalState = globalState
+            ).run()
+
+            GeolocationManager(
+                coroutineScope = contextOf<CoroutineScope>(),
+                globalState = globalState
+            ).run()
         }
-
-        LeafletManager(
-            coroutineScope = coroutineScope,
-            globalState = globalState
-        ).run()
-
-        GeolocationManager(
-            coroutineScope = coroutineScope,
-            globalState = globalState
-        ).run()
     }
 }

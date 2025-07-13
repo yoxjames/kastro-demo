@@ -23,10 +23,11 @@ import dev.jamesyox.kastro.demo.htmlContent
 import dev.jamesyox.kastro.demo.sol.prettyString
 import dev.jamesyox.kastro.sol.SolarEvent
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toStdlibInstant
 
+context(timeZone: TimeZone)
 fun SolarEventDetailView(
     event: SolarEvent,
-    timeZone: TimeZone,
     description: String,
     onEvent: (SolarEventDetailViewEvent) -> Unit
 ) = htmlContent {
@@ -35,10 +36,7 @@ fun SolarEventDetailView(
         description = description,
         onBack = { onEvent(SolarEventDetailViewEvent.BackClicked) }
     ) {
-        TimeCell(
-            timeZone = timeZone,
-            event.time
-        )
+        TimeCell(event.time.toStdlibInstant())
         ApiCell(event)
     }
 }
