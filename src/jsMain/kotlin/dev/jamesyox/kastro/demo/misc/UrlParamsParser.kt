@@ -70,7 +70,8 @@ val CelestialParameters.url: String get(): String {
     val params = listOf(
         LATITUDE_KEY to location.latitude.toString(),
         LONGITUDE_KEY to location.longitude.toString(),
-        DATE_KEY to date.toString()
+        DATE_KEY to date.toString(),
+        HEIGHT_KEY to height.toString()
     )
     val paramsString = params.joinToString(separator = "&") {
         "${it.first}=${it.second}"
@@ -81,6 +82,7 @@ val CelestialParameters.locationUrl: String get(): String {
     val params = listOf(
         LATITUDE_KEY to location.latitude.toString(),
         LONGITUDE_KEY to location.longitude.toString(),
+        HEIGHT_KEY to height.toString()
     )
     val paramsString = params.joinToString(separator = "&") {
         "${it.first}=${it.second}"
