@@ -49,7 +49,7 @@ import kotlinx.html.styleLink
 import kotlinx.html.title
 import kotlinx.io.files.Path
 
-private const val VERSION = "6"
+private const val VERSION = "7"
 
 fun main() {
     staticSite(
