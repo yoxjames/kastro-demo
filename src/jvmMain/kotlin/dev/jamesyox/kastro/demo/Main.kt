@@ -49,7 +49,7 @@ import kotlinx.html.styleLink
 import kotlinx.html.title
 import kotlinx.io.files.Path
 
-private const val VERSION = "8"
+private const val VERSION = "9"
 
 fun main() {
     staticSite(
@@ -103,7 +103,7 @@ fun main() {
                             }
                             +"Kastro Demo by James Yox."
                             br
-                            +"kastro-js:0.4.0"
+                            +"kastro-js:0.5.0"
                         }
                     }
                 }

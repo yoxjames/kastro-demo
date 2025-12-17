@@ -32,7 +32,7 @@ class GeolocationManager(
     fun run() {
         coroutineScope.launch {
             globalState.geolocationRequests.collect {
-                navigator.geolocation.getCurrentPosition(
+                navigator.geolocation.getCurrentPositionWithCallbacks(
                     options = object : PositionOptions {
                         override var enableHighAccuracy: Boolean? = true
                         override var maximumAge: Int? = null
@@ -50,7 +50,7 @@ class GeolocationManager(
                             )
                         }
                     },
-                    errorCallback = {
+                    errorCallback = { error ->
                         this@launch.launch {
                             globalState.kastroDemoEvents.emit(
                                 KastroDemoEvent.GeolocationEvent.GeolocationFailure

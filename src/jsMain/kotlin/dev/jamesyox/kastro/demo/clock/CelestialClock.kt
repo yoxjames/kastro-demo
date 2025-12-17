@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.datetime.toDeprecatedInstant
 import kotlinx.html.TagConsumer
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.svg.SVGElement
@@ -138,8 +137,7 @@ private fun dev.jamesyox.svgk.TagConsumer<SVGElement>.CelestialClock(
             )
         ) {
             Moon(
-                state.time.toDeprecatedInstant()
-                    .calculateLunarState(state.celestialParameters.location.asPair())
+                state.time.calculateLunarState(state.celestialParameters.location.asPair())
                     .illumination
                     .phase
             )

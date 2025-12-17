@@ -51,8 +51,6 @@ import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
-import kotlinx.datetime.toDeprecatedInstant
-import kotlinx.datetime.toStdlibInstant
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -200,25 +198,20 @@ class GlobalState(
 
     val lunarState = currentTimeState
         .combine(paramsState) { time, params ->
-            time.toDeprecatedInstant().calculateLunarState(params.location.asPair())
+            time.calculateLunarState(params.location.asPair())
         }
         .stateIn(
             scope = appScope,
             started = SharingStarted.Eagerly,
-            initialValue = clock.now()
-                .toDeprecatedInstant()
-                .calculateLunarState(startingParams.location.asPair())
+            initialValue = clock.now().calculateLunarState(startingParams.location.asPair())
         )
 
     val solarState = currentTimeState
-        .combine(paramsState) { time, params ->
-            time.toDeprecatedInstant().calculateSolarState(params.location.asPair())
-        }
+        .combine(paramsState) { time, params -> time.calculateSolarState(params.location.asPair()) }
         .stateIn(
             scope = appScope,
             started = SharingStarted.Eagerly,
-            initialValue = clock.now()
-                .toDeprecatedInstant().calculateSolarState(startingParams.location.asPair())
+            initialValue = clock.now().calculateSolarState(startingParams.location.asPair())
         )
 
     private val nextSolarHorizonEvent = paramsState.transformLatest {
@@ -226,7 +219,7 @@ class GlobalState(
         while (true) {
             val event = iter.next()
             emit(event)
-            delay(event.time.toStdlibInstant() - clock.now())
+            delay(event.time - clock.now())
         }
     }
 
@@ -235,7 +228,7 @@ class GlobalState(
         while (true) {
             val event = iter.next()
             emit(event)
-            delay(event.time.toStdlibInstant() - clock.now())
+            delay(event.time - clock.now())
         }
     }
 
@@ -253,10 +246,10 @@ class GlobalState(
     }
 
     val solarCountDownContent = nextSolarHorizonEvent
-        .map { Pair(it.prettyString, it.time.toStdlibInstant()) }
+        .map { Pair(it.prettyString, it.time) }
         .toCountdown()
     val lunarCountDownContent = nextLunarHorizonEvent
-        .map { Pair(it.prettyString, it.time.toStdlibInstant()) }
+        .map { Pair(it.prettyString, it.time) }
         .toCountdown()
 
     val celestialClockState = combine(paramsState, currentTimeState) { params, time ->

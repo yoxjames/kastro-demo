@@ -20,8 +20,6 @@ package dev.jamesyox.kastro.demo.luna
 import dev.jamesyox.kastro.common.HorizonState
 import dev.jamesyox.kastro.luna.LunarEvent
 import dev.jamesyox.kastro.luna.calculateLunarState
-import kotlinx.datetime.toDeprecatedInstant
-import kotlinx.datetime.toStdlibInstant
 import kotlin.time.Instant
 
 data class LunarHorizonState(
@@ -48,11 +46,11 @@ fun List<LunarEvent>.lunarHorizonState(
             LunarHorizonElement(
                 start = timeRange.start,
                 startEvent = null,
-                horizonState = timeRange.start.toDeprecatedInstant().calculateLunarState(location).horizonState
+                horizonState = timeRange.start.calculateLunarState(location).horizonState
             )
         ) { _, horizonEvent ->
             LunarHorizonElement(
-                start = horizonEvent.time.toStdlibInstant(),
+                start = horizonEvent.time,
                 startEvent = horizonEvent,
                 horizonState = horizonEvent.horizonState
             )
@@ -61,7 +59,7 @@ fun List<LunarEvent>.lunarHorizonState(
             LunarHorizonElement(
                 start = timeRange.endInclusive,
                 startEvent = null,
-                horizonState = timeRange.endInclusive.toDeprecatedInstant().calculateLunarState(location).horizonState
+                horizonState = timeRange.endInclusive.calculateLunarState(location).horizonState
             )
         ).zipWithNext()
         .map {

@@ -35,7 +35,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toStdlibInstant
 import org.w3c.dom.svg.SVGElement
 import kotlin.time.Instant
 
@@ -92,7 +91,7 @@ fun TagConsumer<SVGElement>.EventSpanner(
         .filter { it.shouldDraw }
         .forEach { event ->
             EventHash(
-                time = event.time.toStdlibInstant(),
+                time = event.time,
                 outerRadius = outerRadius,
                 innerRadius = innerRadius,
                 timeRange = timeRange,
@@ -101,50 +100,50 @@ fun TagConsumer<SVGElement>.EventSpanner(
             )
             when (event) {
                 is KastroEvent.Lunar -> when (val lunarEvent = event.event) {
-                    is LunarEvent.HorizonEvent.Moonrise -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.HorizonEvent.Moonrise -> ClockEventGlyph(time = lunarEvent.time) {
                         RiseGlyph("white")
                     }
-                    is LunarEvent.HorizonEvent.Moonset -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.HorizonEvent.Moonset -> ClockEventGlyph(time = lunarEvent.time) {
                         SetGlyph("white")
                     }
-                    is LunarEvent.PhaseEvent.FirstQuarter -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.PhaseEvent.FirstQuarter -> ClockEventGlyph(time = lunarEvent.time) {
                         Moon(LunarEvent.PhaseEvent.FirstQuarter.phase)
                     }
-                    is LunarEvent.PhaseEvent.FullMoon -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.PhaseEvent.FullMoon -> ClockEventGlyph(time = lunarEvent.time) {
                         Moon(LunarEvent.PhaseEvent.FullMoon.phase)
                     }
-                    is LunarEvent.PhaseEvent.LastQuarter -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.PhaseEvent.LastQuarter -> ClockEventGlyph(time = lunarEvent.time) {
                         Moon(LunarEvent.PhaseEvent.LastQuarter.phase)
                     }
-                    is LunarEvent.PhaseEvent.NewMoon -> ClockEventGlyph(time = lunarEvent.time.toStdlibInstant()) {
+                    is LunarEvent.PhaseEvent.NewMoon -> ClockEventGlyph(time = lunarEvent.time) {
                         Moon(LunarEvent.PhaseEvent.NewMoon.phase)
                     }
                 }
                 is KastroEvent.Solar -> when (val solarEvent = event.event) {
                     is SolarEvent.Sunrise -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time.toStdlibInstant(),
+                        time = solarEvent.time,
                         timeRange = timeRange,
                     ) {
                         RiseGlyph("yellow")
                     }
                     is SolarEvent.Sunset -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time.toStdlibInstant(),
+                        time = solarEvent.time,
                         timeRange = timeRange,
                     ) {
                         SetGlyph("yellow")
                     }
                     is SolarEvent.Nadir -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time.toStdlibInstant(),
+                        time = solarEvent.time,
                         timeRange = timeRange,
                     ) {
                         NadirGlyph()
                     }
                     is SolarEvent.Noon -> ClockEventGlyph(
                         distance = outerRadius + 3,
-                        time = solarEvent.time.toStdlibInstant(),
+                        time = solarEvent.time,
                         timeRange = timeRange,
                     ) {
                         NoonGlyph()
@@ -161,7 +160,7 @@ fun TagConsumer<SVGElement>.EventSpanner(
                 svgContent {
                     it?.let { selected ->
                         this@svgContent.EventHash(
-                            time = selected.time.toStdlibInstant(),
+                            time = selected.time,
                             outerRadius = outerRadius,
                             innerRadius = selectedInnerRadius,
                             timeRange = timeRange,

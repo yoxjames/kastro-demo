@@ -22,8 +22,6 @@ import dev.jamesyox.kastro.sol.LightPhase
 import dev.jamesyox.kastro.sol.LightState
 import dev.jamesyox.kastro.sol.SolarEvent
 import dev.jamesyox.kastro.sol.calculateSolarState
-import kotlinx.datetime.toDeprecatedInstant
-import kotlinx.datetime.toStdlibInstant
 import kotlin.time.Instant
 
 data class SolarLightState(
@@ -48,11 +46,11 @@ fun List<SolarEvent>.solarLightState(
         SolarLightStateTime(
             start = timeRange.start,
             startEvent = null,
-            lightStates = timeRange.start.toDeprecatedInstant().calculateSolarState(location).lightStates
+            lightStates = timeRange.start.calculateSolarState(location).lightStates
         )
     ) { acc, solarEvent ->
         SolarLightStateTime(
-            start = solarEvent.time.toStdlibInstant(),
+            start = solarEvent.time,
             startEvent = solarEvent,
             lightStates = calculateLightState(acc.lightStates, solarEvent)
         )

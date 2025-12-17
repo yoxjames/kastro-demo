@@ -114,6 +114,14 @@ tasks.register<Copy>("copyJsStatikContent") {
     into("docs/.")
 }
 
+tasks.register<Copy>("copyJsStatikContentDebug") {
+    val taskName = "jsBrowserDevelopmentWebpack"
+    val webpackTask = tasks.getByName<KotlinWebpack>(taskName)
+    dependsOn(webpackTask) // make sure JS gets compiled first
+    from(webpackTask.outputDirectory.asFile.get())
+    into("debugSite/.")
+}
+
 fun String.isNonStable(): Boolean {
     val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { uppercase().contains(it) }
     val regex = "^[0-9,.v-]+(-r)?$".toRegex()
