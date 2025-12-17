@@ -21,7 +21,6 @@ import dev.jamesyox.kastro.demo.GlobalState
 import dev.jamesyox.kastro.demo.KastroDemoEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import web.geolocation.GeolocationPosition
 import web.geolocation.PositionOptions
 import web.navigator.navigator
 
@@ -33,12 +32,10 @@ class GeolocationManager(
         coroutineScope.launch {
             globalState.geolocationRequests.collect {
                 navigator.geolocation.getCurrentPositionWithCallbacks(
-                    options = object : PositionOptions {
-                        override var enableHighAccuracy: Boolean? = true
-                        override var maximumAge: Int? = null
-                        override var timeout: Int? = null
-                    },
-                    successCallback = { geolocationPosition: GeolocationPosition ->
+                    options = PositionOptions(
+                        enableHighAccuracy = true,
+                    ),
+                    successCallback = { geolocationPosition ->
                         this@launch.launch {
                             globalState.kastroDemoEvents.emit(
                                 KastroDemoEvent.GeolocationEvent.GeolocationSuccess(
@@ -52,6 +49,7 @@ class GeolocationManager(
                     },
                     errorCallback = { error ->
                         this@launch.launch {
+                            println("Geolocation failure: ${error.message}")
                             globalState.kastroDemoEvents.emit(
                                 KastroDemoEvent.GeolocationEvent.GeolocationFailure
                             )
