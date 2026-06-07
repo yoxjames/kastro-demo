@@ -21,12 +21,21 @@ import dev.jamesyox.kastro.demo.CelestialParameters
 import dev.jamesyox.kastro.demo.misc.Location
 import dev.jamesyox.kastro.demo.misc.locationUrl
 import dev.jamesyox.kastro.demo.misc.url
-import dev.jamesyox.kastro.demo.svgk.js.svgMagick
+import dev.jamesyox.kastro.demo.svgk.js.svg
 import dev.jamesyox.kastro.demo.values
 import dev.jamesyox.statik.css
-import dev.jamesyox.svgk.attr.types.obj.ViewBox
-import dev.jamesyox.svgk.tags.path
-import dev.jamesyox.svgk.tags.svg
+import dev.jamesyox.svg4kt.attr.attrs.ViewBox
+import dev.jamesyox.svg4kt.attr.attrs.d
+import dev.jamesyox.svg4kt.attr.attrs.fill
+import dev.jamesyox.svg4kt.attr.attrs.stroke
+import dev.jamesyox.svg4kt.attr.attrs.strokeWidth
+import dev.jamesyox.svg4kt.attr.attrs.viewBox
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
+import dev.jamesyox.svg4kt.attr.types.obj.none
+import dev.jamesyox.svg4kt.tags.path
+import dev.jamesyox.svg4kt.util.L
+import dev.jamesyox.svg4kt.util.M
+import dev.jamesyox.svg4kt.util.Z
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -146,27 +155,29 @@ fun TagConsumer<HTMLElement>.InputPanel(
         // Map
         div {
             id = "map"
-            svgMagick {
-                svg(
-                    viewBox = ViewBox(-3, -7, 6, 14)
-                ) {
-                    path(fill = "blue", strokeWidth = 0.25, stroke = "white") {
+            svg {
+                viewBox = ViewBox(-3, -7, 6, 14)
+                path {
+                    fill(SvgColor.Blue)
+                    strokeWidth = 0.25.none
+                    stroke(SvgColor.White)
+                    d {
                         M(0, 0)
                         L(-3, -7)
                         L(0, -5)
                         L(3, -7)
                         Z
                     }
-                }.css {
-                    position = Position.absolute
-                    height = 40.px
-                    width = 40.px
-                    zIndex = 500
-                    top = 50.pct
-                    left = 50.pct
-                    transform = Transforms().apply {
-                        translate((-50).pct, (-50).pct)
-                    }
+                }
+            }.css {
+                position = Position.absolute
+                height = 40.px
+                width = 40.px
+                zIndex = 500
+                top = 50.pct
+                left = 50.pct
+                transform = Transforms().apply {
+                    translate((-50).pct, (-50).pct)
                 }
             }
         }

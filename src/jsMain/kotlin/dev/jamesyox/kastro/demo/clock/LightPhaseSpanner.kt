@@ -23,18 +23,23 @@ import dev.jamesyox.kastro.demo.sol.SolarLightState
 import dev.jamesyox.kastro.demo.sol.radiusOffset
 import dev.jamesyox.kastro.demo.sol.stroke
 import dev.jamesyox.kastro.demo.svgk.Selected
-import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.strokeOpacity
-import dev.jamesyox.svgk.attr.types.obj.pct
-import dev.jamesyox.svgk.attrs
+import dev.jamesyox.svg4kt.TagConsumer
+import dev.jamesyox.svg4kt.attr.attrs.strokeOpacity
+import dev.jamesyox.svg4kt.attrs
+import dev.jamesyox.svg4kt.meta.unsafe
+import dev.jamesyox.svg4kt.tags.categories.container.ElementContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.w3c.dom.svg.SVGElement
 import kotlin.time.Instant
 
-context(coroutineScope: CoroutineScope)
-fun TagConsumer<SVGElement>.LightPhaseSpan(
+context(
+    coroutineScope: CoroutineScope,
+    tagConsumer: TagConsumer<SVGElement>,
+    _: ElementContainer.Circle
+)
+fun LightPhaseSpan(
     radius: Double,
     solarLightState: List<SolarLightState>,
     timeRange: ClosedRange<Instant>,
@@ -44,19 +49,20 @@ fun TagConsumer<SVGElement>.LightPhaseSpan(
     val elements = solarLightState.associateBy(keySelector = { it }) {
         circlePart(
             radius = radius + it.lightState.radiusOffset,
-            stroke = it.lightState.stroke,
             start = timeRange.computeAngle(it.start),
             theta = timeRange.computeAngle(from = it.start, time = it.end),
-            strokeWidth = 3.0,
-            onClick = { onClick(it) }
-        )
+            outlineColor = it.lightState.stroke,
+            outlineWidth = 3.0
+        ) { onClick(it) }
     }
 
     coroutineScope.launch {
         selected.collect { selectedState ->
             elements.forEach { mapEntry ->
                 mapEntry.value.attrs {
-                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState).pct
+                    unsafe {
+                        strokeOpacity = (mapEntry.key.calculateOpacity(selectedState) / 100.0).toFloat()
+                    }
                 }
             }
         }

@@ -22,18 +22,19 @@ import dev.jamesyox.kastro.demo.computeAngle
 import dev.jamesyox.kastro.demo.sol.SolarPhaseState
 import dev.jamesyox.kastro.demo.sol.stroke
 import dev.jamesyox.kastro.demo.svgk.Selected
-import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.strokeOpacity
-import dev.jamesyox.svgk.attr.types.obj.pct
-import dev.jamesyox.svgk.attrs
+import dev.jamesyox.svg4kt.TagConsumer
+import dev.jamesyox.svg4kt.attr.attrs.strokeOpacity
+import dev.jamesyox.svg4kt.attrs
+import dev.jamesyox.svg4kt.meta.unsafe
+import dev.jamesyox.svg4kt.tags.categories.container.ElementContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.w3c.dom.svg.SVGElement
 import kotlin.time.Instant
 
-context(coroutineScope: CoroutineScope)
-fun TagConsumer<SVGElement>.TwilightSpanner(
+context(coroutineScope: CoroutineScope, _: TagConsumer<SVGElement>, _: ElementContainer.Circle)
+fun TwilightSpanner(
     radius: Double,
     solarPhaseStates: List<SolarPhaseState>,
     timeRange: ClosedRange<Instant>,
@@ -43,8 +44,8 @@ fun TagConsumer<SVGElement>.TwilightSpanner(
     val elements = solarPhaseStates.associateBy(keySelector = { it }) {
         circlePart(
             radius = radius,
-            strokeWidth = 20.0,
-            stroke = it.phase.stroke,
+            outlineWidth = 20.0,
+            outlineColor = it.phase.stroke,
             start = timeRange.computeAngle(it.start),
             theta = timeRange.computeAngle(from = it.start, time = it.end),
             onClick = { onClick(it) }
@@ -55,7 +56,9 @@ fun TagConsumer<SVGElement>.TwilightSpanner(
         selected.collect { selectedState ->
             elements.forEach { mapEntry ->
                 mapEntry.value.attrs {
-                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState).pct
+                    unsafe {
+                        strokeOpacity = (mapEntry.key.calculateOpacity(selectedState) / 100.0).toFloat()
+                    }
                 }
             }
         }

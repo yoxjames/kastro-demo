@@ -48,7 +48,7 @@ fun TagConsumer<HTMLElement>.LunarHorizonPhaseRows(
         tr {
             classSelector(stylesheet.stateTableRow)
             css {
-                backgroundColor = Color(lunarHorizonState.horizonState.stroke)
+                backgroundColor = Color(lunarHorizonState.horizonState.stroke.svgString)
                 color = if (blackTextPhases.contains(lunarHorizonState.horizonState)) Color.black else Color.white
             }
             TableCell(lunarHorizonState.horizonState.lunarPrettyString)

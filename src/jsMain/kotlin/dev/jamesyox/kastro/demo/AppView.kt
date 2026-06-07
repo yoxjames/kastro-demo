@@ -82,11 +82,9 @@ fun TagConsumer<HTMLElement>.AppView(
                 width = 100.pct
             }
         }
+
         globalState.paramsState.map {
-            it.html(
-                globalState = globalState,
-                stylesheet = stylesheet
-            ) {
+            it.html(globalState = globalState, stylesheet = stylesheet) {
                 appScope.launch { globalState.kastroDemoEvents.emit(KastroDemoEvent.List(it)) }
             }
         }

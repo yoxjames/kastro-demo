@@ -25,12 +25,18 @@ import dev.jamesyox.kastro.demo.replacingInnerHTML
 import dev.jamesyox.kastro.demo.replacingInnerText
 import dev.jamesyox.kastro.demo.roundTwoSigFig
 import dev.jamesyox.kastro.demo.sol.prettyString
-import dev.jamesyox.kastro.demo.svgk.js.svgMagick
+import dev.jamesyox.kastro.demo.svgk.js.svg
 import dev.jamesyox.kastro.sol.SolarState
 import dev.jamesyox.statik.css
-import dev.jamesyox.svgk.attr.types.obj.ViewBox
-import dev.jamesyox.svgk.tags.circle
-import dev.jamesyox.svgk.tags.svg
+import dev.jamesyox.svg4kt.attr.attrs.ViewBox
+import dev.jamesyox.svg4kt.attr.attrs.cx
+import dev.jamesyox.svg4kt.attr.attrs.cy
+import dev.jamesyox.svg4kt.attr.attrs.fill
+import dev.jamesyox.svg4kt.attr.attrs.r
+import dev.jamesyox.svg4kt.attr.attrs.viewBox
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
+import dev.jamesyox.svg4kt.attr.types.obj.none
+import dev.jamesyox.svg4kt.tags.circle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.css.Align
@@ -95,9 +101,13 @@ private fun SolarStateCell(
                 padding = Padding(10.px)
                 backgroundColor = Color.black
             }
-            svgMagick {
-                svg(viewBox = ViewBox(minX = -5, minY = -5, width = 10, height = 10)) {
-                    circle(r = 5, cx = 0, cy = 0, fill = "yellow")
+            svg {
+                viewBox = ViewBox(minX = -5, minY = -5, width = 10, height = 10)
+                circle {
+                    r = 5.none
+                    cx = 0.none
+                    cy = 0.none
+                    fill(SvgColor.Yellow)
                 }
             }
         }

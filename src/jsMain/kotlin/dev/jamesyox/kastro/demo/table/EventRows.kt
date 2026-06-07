@@ -33,6 +33,7 @@ import dev.jamesyox.kastro.luna.LunarEvent
 import dev.jamesyox.kastro.sol.SolarEvent
 import dev.jamesyox.statik.classSelector
 import dev.jamesyox.statik.css
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
 import kotlinx.css.Align
 import kotlinx.css.Display
 import kotlinx.css.FlexDirection
@@ -142,8 +143,8 @@ private fun TagConsumer<HTMLElement>.EventCell(content: EventRowType) {
             }
             when (content) {
                 is EventRowType.Lunar -> when (content.event) {
-                    is LunarEvent.HorizonEvent.Moonrise -> EventGlyph { RiseGlyph("white") }
-                    is LunarEvent.HorizonEvent.Moonset -> EventGlyph { SetGlyph("white") }
+                    is LunarEvent.HorizonEvent.Moonrise -> EventGlyph { RiseGlyph(SvgColor.White) }
+                    is LunarEvent.HorizonEvent.Moonset -> EventGlyph { SetGlyph(SvgColor.White) }
                     is LunarEvent.PhaseEvent.FirstQuarter -> EventGlyph {
                         Moon(
                             LunarEvent.PhaseEvent.FirstQuarter.phase
@@ -155,8 +156,8 @@ private fun TagConsumer<HTMLElement>.EventCell(content: EventRowType) {
                 }
 
                 is EventRowType.Solar -> when (content.event) {
-                    is SolarEvent.Sunrise -> EventGlyph { RiseGlyph("yellow") }
-                    is SolarEvent.Sunset -> EventGlyph { SetGlyph("yellow") }
+                    is SolarEvent.Sunrise -> EventGlyph { RiseGlyph(SvgColor.Yellow) }
+                    is SolarEvent.Sunset -> EventGlyph { SetGlyph(SvgColor.Yellow) }
                     is SolarEvent.Noon -> EventGlyph { NoonGlyph() }
                     is SolarEvent.Nadir -> EventGlyph { NadirGlyph() }
                     else -> Unit

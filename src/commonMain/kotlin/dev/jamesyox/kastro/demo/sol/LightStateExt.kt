@@ -18,13 +18,14 @@
 package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.LightState
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
 
-private const val blueHourColor = "#4242f5"
-private const val goldenHourColor = "#DAA520"
+private const val blueHourColor = 0x4242f5
+private const val goldenHourColor = 0xDAA520
 
 val LightState.stroke get() = when (this) {
-    LightState.BlueHourDawn, LightState.BlueHourDusk -> blueHourColor
-    LightState.GoldenHourDawn, LightState.GoldenHourDusk -> goldenHourColor
+    LightState.BlueHourDawn, LightState.BlueHourDusk -> SvgColor.Hex.RGB(blueHourColor)
+    LightState.GoldenHourDawn, LightState.GoldenHourDusk -> SvgColor.Hex.RGB(goldenHourColor)
 }
 
 val LightState.radiusOffset get() = when (this) {

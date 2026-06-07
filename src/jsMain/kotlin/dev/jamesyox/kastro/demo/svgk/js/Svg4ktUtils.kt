@@ -17,25 +17,21 @@
 
 package dev.jamesyox.kastro.demo.svgk.js
 
-import dev.jamesyox.svgk.JsDomTagConsumer
-import kotlinx.browser.document
+import dev.jamesyox.svg4kt.attr.AttributeConsumer
+import dev.jamesyox.svg4kt.createSvg
+import dev.jamesyox.svg4kt.tags.Svg
 import kotlinx.html.TagConsumer
 import kotlinx.html.js.div
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.svg.SVGElement
 
-fun <T> TagConsumer<HTMLElement>.svgMagick(
-    block: dev.jamesyox.svgk.TagConsumer<SVGElement>.() -> T
-): T {
-    val tagConsumer = JsDomTagConsumer(document)
-    val output = tagConsumer.block()
-    val svgDom = tagConsumer.output()
+fun TagConsumer<HTMLElement>.svg(
+    block: context(dev.jamesyox.svg4kt.TagConsumer<SVGElement>, Svg, AttributeConsumer) () -> Unit
+): SVGElement {
+    val svg = createSvg { block() }
     val hackDiv = div { }
     val currentNode = hackDiv.parentNode
     currentNode?.removeChild(hackDiv)
-
-    currentNode?.let {
-        svgDom.forEach { child -> it.appendChild(child) }
-    }
-    return output
+    currentNode?.appendChild(svg)
+    return svg
 }

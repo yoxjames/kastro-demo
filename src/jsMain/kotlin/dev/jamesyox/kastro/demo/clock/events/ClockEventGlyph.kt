@@ -19,47 +19,50 @@ package dev.jamesyox.kastro.demo.clock.events
 
 import dev.jamesyox.kastro.demo.clock.SvgCoords
 import dev.jamesyox.kastro.demo.computeAngle
-import dev.jamesyox.kastro.demo.svgk.js.svgMagick
+import dev.jamesyox.kastro.demo.svgk.js.svg
 import dev.jamesyox.statik.css
-import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.objs.transform.Translate
-import dev.jamesyox.svgk.tags.g
+import dev.jamesyox.svg4kt.TagConsumer
+import dev.jamesyox.svg4kt.attr.AttributeConsumer
+import dev.jamesyox.svg4kt.attr.attrs.transform
+import dev.jamesyox.svg4kt.tags.Svg
+import dev.jamesyox.svg4kt.tags.categories.container.ElementContainer
+import dev.jamesyox.svg4kt.tags.g
+import dev.jamesyox.svg4kt.util.translate
 import kotlinx.css.Padding
 import kotlinx.css.padding
-import kotlinx.css.px
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.svg.SVGElement
 import kotlin.time.Instant
+import kotlinx.css.px as csspx
 
-fun TagConsumer<SVGElement>.ClockEventGlyph(
+context(_: TagConsumer<SVGElement>, _: ElementContainer.G)
+fun ClockEventGlyph(
     distance: Double,
     time: Instant,
     timeRange: ClosedRange<Instant>,
-    content: TagConsumer<SVGElement>.() -> SVGElement
+    content: context(TagConsumer<SVGElement>, ElementContainer.G) () -> SVGElement
 ) {
     val angularPosition = timeRange.computeAngle(time)
     val coords = SvgCoords.Polar(distance, angularPosition)
-    g(
-        transform = listOf(
-            Translate(-1.5, -1.5),
-            Translate(coords.x, coords.y),
-        )
-    ) {
-        content().apply {
-            setAttribute("width", "4px")
-            setAttribute("height", "4px")
+    g {
+        transform {
+            translate(-1.5, -1.5)
+            translate(coords.x, coords.y)
         }
+        val result = content()
+        result.setAttribute("width", "4px")
+        result.setAttribute("height", "4px")
     }
 }
 
 fun kotlinx.html.TagConsumer<HTMLElement>.EventGlyph(
-    content: TagConsumer<SVGElement>.() -> SVGElement
+    content: context(TagConsumer<SVGElement>, Svg, AttributeConsumer) () -> Unit
 ) {
-    svgMagick(content).apply {
+    svg { content() }.apply {
         setAttribute("height", "25px")
         setAttribute("width", "25px")
         css {
-            padding = Padding(4.px)
+            padding = Padding(4.csspx)
         }
     }
 }

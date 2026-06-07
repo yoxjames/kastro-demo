@@ -17,8 +17,7 @@
 
 package dev.jamesyox.kastro.demo.clock.js
 
-import dev.jamesyox.kastro.demo.clock.Moon
-import dev.jamesyox.svgk.TagConsumer
+import dev.jamesyox.svg4kt.TagConsumer
 import web.svg.SVGElement
 
 fun TagConsumer<SVGElement>.Moon(phase: Double): SVGElement {

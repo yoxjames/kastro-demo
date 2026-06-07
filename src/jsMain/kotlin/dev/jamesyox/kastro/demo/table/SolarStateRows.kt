@@ -52,7 +52,7 @@ fun TagConsumer<HTMLElement>.SolarStateRows(
             tr {
                 classSelector(stylesheet.stateTableRow)
                 css {
-                    backgroundColor = Color(row.stroke)
+                    backgroundColor = Color(row.stroke.svgString)
                     color = if (row.isBlackText) Color.black else Color.white
                 }
                 TableCell(row.prettyString)

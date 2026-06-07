@@ -22,21 +22,23 @@ import dev.jamesyox.kastro.demo.calculateOpacity
 import dev.jamesyox.kastro.demo.computeAngle
 import dev.jamesyox.kastro.demo.luna.LunarHorizonState
 import dev.jamesyox.kastro.demo.svgk.Selected
-import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.strokeOpacity
-import dev.jamesyox.svgk.attr.types.obj.pct
-import dev.jamesyox.svgk.attrs
+import dev.jamesyox.svg4kt.TagConsumer
+import dev.jamesyox.svg4kt.attr.attrs.strokeOpacity
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
+import dev.jamesyox.svg4kt.attrs
+import dev.jamesyox.svg4kt.meta.unsafe
+import dev.jamesyox.svg4kt.tags.categories.container.ElementContainer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.w3c.dom.svg.SVGElement
 import kotlin.time.Instant
 
-private const val MOON_UP_COLOR = "#ffffff"
-private const val MOON_DOWN_COLOR = "#2f4f4f"
+private const val MOON_UP_COLOR = 0xffffff
+private const val MOON_DOWN_COLOR = 0x2f4f4f
 
-context(coroutineScope: CoroutineScope)
-fun TagConsumer<SVGElement>.LunarHorizonSpanner(
+context(coroutineScope: CoroutineScope, _: TagConsumer<SVGElement>, _: ElementContainer.Circle)
+fun LunarHorizonSpanner(
     radius: Double,
     timeRange: ClosedRange<Instant>,
     lunarHorizonState: List<LunarHorizonState>,
@@ -46,19 +48,20 @@ fun TagConsumer<SVGElement>.LunarHorizonSpanner(
     val elements = lunarHorizonState.associateBy(keySelector = { it }) {
         circlePart(
             radius = radius,
-            stroke = it.horizonState.stroke,
-            strokeWidth = 20.0,
             start = timeRange.computeAngle(it.start),
             theta = timeRange.computeAngle(from = it.start, time = it.end),
-            onClick = { onClick(it) }
-        )
+            outlineColor = it.horizonState.stroke,
+            outlineWidth = 20.0
+        ) { onClick(it) }
     }
 
     coroutineScope.launch {
         selected.collect { selectedState ->
             elements.forEach { mapEntry ->
                 mapEntry.value.attrs {
-                    strokeOpacity = mapEntry.key.calculateOpacity(selectedState).pct
+                    unsafe {
+                        strokeOpacity = (mapEntry.key.calculateOpacity(selectedState) / 100.0).toFloat()
+                    }
                 }
             }
         }
@@ -66,6 +69,6 @@ fun TagConsumer<SVGElement>.LunarHorizonSpanner(
 }
 
 internal val HorizonState.stroke get() = when (this) {
-    HorizonState.Up -> MOON_UP_COLOR
-    HorizonState.Down -> MOON_DOWN_COLOR
+    HorizonState.Up -> SvgColor.Hex.RGB(MOON_UP_COLOR)
+    HorizonState.Down -> SvgColor.Hex.RGB(MOON_DOWN_COLOR)
 }

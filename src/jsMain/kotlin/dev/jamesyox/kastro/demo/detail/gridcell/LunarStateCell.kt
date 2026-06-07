@@ -27,10 +27,15 @@ import dev.jamesyox.kastro.demo.misc.arrow
 import dev.jamesyox.kastro.demo.replacingInnerHTML
 import dev.jamesyox.kastro.demo.replacingInnerText
 import dev.jamesyox.kastro.demo.roundTwoSigFig
-import dev.jamesyox.kastro.demo.svgk.js.svgMagick
+import dev.jamesyox.kastro.demo.svgk.js.svg
 import dev.jamesyox.kastro.luna.LunarState
 import dev.jamesyox.kastro.luna.closestPhase
 import dev.jamesyox.statik.css
+import dev.jamesyox.svg4kt.attr.attrs.ViewBox
+import dev.jamesyox.svg4kt.attr.attrs.transform
+import dev.jamesyox.svg4kt.attr.attrs.viewBox
+import dev.jamesyox.svg4kt.tags.g
+import dev.jamesyox.svg4kt.util.translate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.css.Align
@@ -98,7 +103,15 @@ private fun LunarStateCell(
                 padding = Padding(10.px)
                 backgroundColor = Color.black
             }
-            svgMagick { Moon(lunarState.illumination.phase) }
+            svg {
+                viewBox = ViewBox(minX = -5, minY = -5, width = 10, height = 10)
+                g {
+                    transform {
+                        translate(-5, -5)
+                    }
+                    Moon(lunarState.illumination.phase)
+                }
+            }
         }
         div {
             css {

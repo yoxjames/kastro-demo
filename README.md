@@ -14,26 +14,22 @@ The goal of this is to:
 1. Show off what Kastro can calculate.
 2. Demonstrate a way of seeing sun and moon calculations in a ways that makes sense
 3. Make it easy to find, reproduce, and report bugs in Kastro
-
+4. Show off my other library SVG For Kotlin (svg4kt) https://github.com/yoxjames/svg4kt
+   * This was used to render all the SVG based visuals in KotlinJS! Give it a try for your own projects!
 
 ## What this is not
 In contrast to Kastro, this is not "production ready." This is a prototype tech demo and the
 code reflects this in many places. There are many things I would have done differently for a more complex project or one
 that I intended others to actually consume. 
 
-You won't be able to build this locally because it's missing two artifacts: 
-1. dev.jamesyox:svgk
-    * This is a library that implements the svg protocol in Kotlin. This is basically `kotlinx-html`
-    but for the svg protocol. This is getting fairly close to done and I hope to publish this soon.
-2. dev.jamesyox:statik
+You won't be able to build this locally because it's missing an artifact: 
+1. dev.jamesyox:statik
     * This is a generic static site generator that's in very early alpha. The inspiration for it came from all the problems I 
    faced making this demo.
 
-As you might be able to guess, these are two projects I am currently working on but have not published. Some day I hope
-to turn these into real libraries that could be used by others.
+Statik is a static site generator written in Kotlin that is a work in progress. I want to build a templateless static
+site generator with code as the user interface. I'll update this page when I publish that.
 
-I plan to eventually update this demo with the published versions of those libraries so it can showcase those as well. 
-However, for now this code mainly exists to show how Kastro could be used in a real application.
 
 ## How to use
 When you load Kastro, by default you will be looking at the current day somewhere in Denver, CO. You can change

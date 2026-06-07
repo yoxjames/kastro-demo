@@ -17,33 +17,44 @@
 
 package dev.jamesyox.kastro.demo.clock
 
-import dev.jamesyox.svgk.TagConsumer
-import dev.jamesyox.svgk.attr.types.obj.pct
-import dev.jamesyox.svgk.tags.circle
+import dev.jamesyox.svg4kt.TagConsumer
+import dev.jamesyox.svg4kt.attr.attrs.fill
+import dev.jamesyox.svg4kt.attr.attrs.r
+import dev.jamesyox.svg4kt.attr.attrs.stroke
+import dev.jamesyox.svg4kt.attr.attrs.strokeDasharray
+import dev.jamesyox.svg4kt.attr.attrs.strokeDashoffset
+import dev.jamesyox.svg4kt.attr.attrs.strokeOpacity
+import dev.jamesyox.svg4kt.attr.attrs.strokeWidth
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
+import dev.jamesyox.svg4kt.attr.types.obj.SvgPaint
+import dev.jamesyox.svg4kt.attr.types.obj.none
+import dev.jamesyox.svg4kt.tags.categories.container.ElementContainer
+import dev.jamesyox.svg4kt.tags.circle
 import org.w3c.dom.svg.SVGElement
 import kotlin.math.PI
 
-fun TagConsumer<SVGElement>.circlePart(
+context(_: TagConsumer<SVGElement>, _: ElementContainer.Circle)
+fun circlePart(
     radius: Double,
     start: Double,
     theta: Double,
-    stroke: String,
-    strokeWidth: Number,
-    strokeOpacity: Double = 100.0,
+    outlineColor: SvgColor,
+    outlineWidth: Number,
+    outlineOpacity: Double = 100.0,
     onClick: () -> Unit
 ): SVGElement {
     val totalSize = (2.0 * PI * radius)
     val dashOffset = (start / 360.0) * totalSize
     val spanSize = (theta / 360.0) * totalSize
-    return circle(
-        r = radius,
-        strokeWidth = strokeWidth,
-        stroke = stroke,
-        fill = "none",
-        strokeOpacity = strokeOpacity.pct,
-        strokeDashoffset = -dashOffset,
-        strokeDasharray = listOf(spanSize, (totalSize - spanSize)),
-    ).apply {
+    return circle {
+        r = radius.none
+        strokeWidth = outlineWidth.none
+        stroke(outlineColor)
+        fill = SvgPaint.None
+        strokeOpacity = (outlineOpacity / 100.0).toFloat()
+        strokeDashoffset = (-dashOffset).none
+        strokeDasharray = listOf(spanSize, (totalSize - spanSize))
+    }.apply {
         onclick = { onClick() }
     }
 }

@@ -67,7 +67,6 @@ kotlin {
 
     sourceSets {
         all {
-            languageSettings.enableLanguageFeature("ContextParameters")
             languageSettings.optIn("kotlin.time.ExperimentalTime")
         }
         commonMain {
@@ -75,8 +74,9 @@ kotlin {
                 implementation(libs.kastro)
                 implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.coroutines)
-                implementation(libs.jamesyox.svgMagick)
+                implementation(libs.jamesyox.svg4kt)
                 implementation(libs.jamesyox.statik)
+                implementation(libs.kotlinx.html)
             }
         }
         jsMain {

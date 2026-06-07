@@ -23,7 +23,6 @@ import dev.jamesyox.kastro.demo.sol.SolarPhaseState
 import dev.jamesyox.kastro.demo.svgk.Selected
 import dev.jamesyox.statik.css
 import dev.jamesyox.statik.css.Selector
-import dev.jamesyox.svgk.JsDomTagConsumer
 import kotlinx.browser.document
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -46,7 +45,6 @@ import org.w3c.dom.MutationObserver
 import org.w3c.dom.MutationObserverInit
 import org.w3c.dom.Node
 import org.w3c.dom.asList
-import org.w3c.dom.svg.SVGElement
 import kotlin.math.roundToInt
 import kotlin.time.Instant
 
@@ -117,10 +115,6 @@ fun htmlContent(block: TagConsumer<HTMLElement>.() -> Unit): List<HTMLElement> {
     }
 }
 
-fun svgContent(block: dev.jamesyox.svgk.TagConsumer<SVGElement>.() -> Unit): List<SVGElement> {
-    return JsDomTagConsumer(document).apply(block).output()
-}
-
 context(coroutineScope: CoroutineScope)
 fun Flow<List<Element>>.insertingBefore(node: Element, child: Node?) {
     coroutineScope.launch {
@@ -150,8 +144,11 @@ fun HTMLElement.replacingInnerText(flow: Flow<String>) {
 context(coroutineScope: CoroutineScope)
 fun Flow<List<Element>>.mountTo(element: Element) {
     coroutineScope.launch {
-        collect {
-            element.replace(it)
+        collect { elements ->
+            element.innerHTML = ""
+            elements.forEach {
+                element.append(it)
+            }
         }
     }
 }
@@ -169,13 +166,13 @@ fun Element.settingAttribute(
 }
 
 fun Element.domCoroutineScope(): CoroutineScope {
-    val coroutineScope = CoroutineScope(Dispatchers.Default)
+    val coroutineScope = CoroutineScope(Dispatchers.Main)
     val observer = MutationObserver { mutationRecords, _ ->
         if (mutationRecords.any { it.removedNodes.asList().contains(this) }) {
             coroutineScope.cancel()
         }
     }
-    observer.observe(document, MutationObserverInit(childList = true, subtree = true))
+    observer.observe(document, MutationObserverInit(childList = true, subtree = true, attributeFilter = undefined))
     return coroutineScope
 }
 

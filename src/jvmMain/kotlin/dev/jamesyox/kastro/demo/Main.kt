@@ -26,6 +26,10 @@ import dev.jamesyox.statik.css.writeCssFile
 import dev.jamesyox.statik.html.writeHtmlFile
 import dev.jamesyox.statik.io.copyResource
 import dev.jamesyox.statik.staticSite
+import dev.jamesyox.svg4kt.SvgTagDSL
+import dev.jamesyox.svg4kt.attr.AttributeConsumer
+import dev.jamesyox.svg4kt.consumers.svgString
+import dev.jamesyox.svg4kt.tags.Svg
 import kotlinx.css.Padding
 import kotlinx.css.TextAlign
 import kotlinx.css.fontSize
@@ -33,6 +37,7 @@ import kotlinx.css.opacity
 import kotlinx.css.padding
 import kotlinx.css.px
 import kotlinx.css.textAlign
+import kotlinx.html.HTMLTag
 import kotlinx.html.body
 import kotlinx.html.br
 import kotlinx.html.div
@@ -47,9 +52,10 @@ import kotlinx.html.p
 import kotlinx.html.script
 import kotlinx.html.styleLink
 import kotlinx.html.title
+import kotlinx.html.unsafe
 import kotlinx.io.files.Path
 
-private const val VERSION = "10"
+private const val VERSION = "11"
 
 fun main() {
     staticSite(
@@ -135,4 +141,13 @@ private fun StaticSiteContext.lightStateStrings(resourcesDirectory: Path) {
     copyResource(resourcesDirectory, Path(LightState.BlueHourDawn.description))
     copyResource(resourcesDirectory, Path(LightState.GoldenHourDawn.description))
     copyResource(resourcesDirectory, Path(LightState.GoldenHourDusk.description))
+}
+
+fun HTMLTag.svg(
+    isPrettyPrint: Boolean = false,
+    block: context(AttributeConsumer, @SvgTagDSL Svg) () -> Unit
+) {
+    unsafe {
+        raw(svgString { this@svg.svg { block() } })
+    }
 }

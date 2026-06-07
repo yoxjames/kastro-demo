@@ -19,6 +19,7 @@ package dev.jamesyox.kastro.demo.sol
 
 import dev.jamesyox.kastro.sol.SolarPhase
 import dev.jamesyox.kastro.sol.Twilight
+import dev.jamesyox.svg4kt.attr.types.obj.SvgColor
 
 val SolarPhase.prettyString get() = when (this) {
     SolarPhase.AstronomicalDawn -> "Astronomical Dawn"
@@ -43,9 +44,9 @@ val SolarPhase.description get() = when (this) {
 }
 
 val SolarPhase.stroke get() = when (this) {
-    is Twilight.AstronomicalTwilight -> "#030c63"
-    is Twilight.CivilTwilight -> "#00abff"
-    is SolarPhase.Day -> "#ffff00"
-    is Twilight.NauticalTwilight -> "#003fc5"
-    is SolarPhase.Night -> "#350038"
-}
+    is Twilight.AstronomicalTwilight -> 0x030c63
+    is Twilight.CivilTwilight -> 0x00abff
+    is SolarPhase.Day -> 0xffff00
+    is Twilight.NauticalTwilight -> 0x003fc5
+    is SolarPhase.Night -> 0x350038
+}.let { SvgColor.Hex.RGB(it) }

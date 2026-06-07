@@ -226,7 +226,7 @@ fun CssBuilder.KastroDemoStylesheet(
         color = Color.white
 
         hover {
-            backgroundColor = Color(SolarPhase.CivilDawn.stroke)
+            backgroundColor = Color(SolarPhase.CivilDawn.stroke.svgString)
             color = Color.black
         }
     }
