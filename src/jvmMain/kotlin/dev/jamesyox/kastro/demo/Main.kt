@@ -20,12 +20,14 @@ package dev.jamesyox.kastro.demo
 import dev.jamesyox.kastro.demo.sol.description
 import dev.jamesyox.kastro.sol.LightState
 import dev.jamesyox.kastro.sol.SolarPhase
-import dev.jamesyox.statik.StaticSiteContext
+import dev.jamesyox.statik.CurrentDirectory
+import dev.jamesyox.statik.FromDirectory
 import dev.jamesyox.statik.css
 import dev.jamesyox.statik.css.writeCssFile
+import dev.jamesyox.statik.fromDirectory
 import dev.jamesyox.statik.html.writeHtmlFile
-import dev.jamesyox.statik.io.copyResource
-import dev.jamesyox.statik.staticSite
+import dev.jamesyox.statik.io.copyFile
+import dev.jamesyox.statik.kGenerate
 import dev.jamesyox.svg4kt.SvgTagDSL
 import dev.jamesyox.svg4kt.attr.AttributeConsumer
 import dev.jamesyox.svg4kt.consumers.svgString
@@ -53,98 +55,113 @@ import kotlinx.html.script
 import kotlinx.html.styleLink
 import kotlinx.html.title
 import kotlinx.html.unsafe
+import kotlinx.io.files.FileSystem
 import kotlinx.io.files.Path
+import kotlinx.io.files.SystemFileSystem
 
-private const val VERSION = "11"
+private const val VERSION = "12"
 
 fun main() {
-    staticSite(
-        root = Path("/home/yoxjames/IdeaProjects/kastro-demo/docs")
-    ) {
-        val resourcesDirectory = Path("/home/yoxjames/IdeaProjects/kastro-demo/resources")
-        writeCssFile(Path("style.css")) {
-            KastroDemoStylesheet(KastroDemoStylesheetAgreement)
-        }
-        writeHtmlFile(Path("index.html")) {
-            html {
-                lang = "en"
-                head {
-                    meta {
-                        charset = "UTF-8"
+    context(SystemFileSystem) {
+        kGenerate(
+            currentDirectory = Path("/home/yoxjames/IdeaProjects/kastro-demo/debugSite")
+        ) {
+            val resourcesDirectory = Path("/home/yoxjames/IdeaProjects/kastro-demo/resources")
+            writeCssFile("style.css") {
+                KastroDemoStylesheet(KastroDemoStylesheet)
+            }
+            writeHtmlFile("index.html") {
+                html {
+                    lang = "en"
+                    head {
+                        meta {
+                            charset = "UTF-8"
+                        }
+                        meta {
+                            name = "viewport"
+                            content = "width=device-width,initial-scale=1.0"
+                        }
+                        meta {
+                            name = "keywords"
+                            content = "sunrise, sunset, moonrise, moonset"
+                        }
+                        meta {
+                            name = "description"
+                            content = "Astronomical calculator for solar and lunar events such as " +
+                                    "sunrise, sunset, moonrise, and moonset. "
+                        }
+                        link {
+                            rel = "stylesheet"
+                            href = "leaflet.css?v=$VERSION"
+                        }
+                        styleLink("style.css")
+                        title { +"Kastro Demo - Sun and Moon Calculator" }
                     }
-                    meta {
-                        name = "viewport"
-                        content = "width=device-width,initial-scale=1.0"
-                    }
-                    meta {
-                        name = "keywords"
-                        content = "sunrise, sunset, moonrise, moonset"
-                    }
-                    meta {
-                        name = "description"
-                        content = "Astronomical calculator for solar and lunar events such as " +
-                            "sunrise, sunset, moonrise, and moonset. "
-                    }
-                    link {
-                        rel = "stylesheet"
-                        href = "leaflet.css?v=$VERSION"
-                    }
-                    styleLink("style.css")
-                    title { +"Kastro Demo - Sun and Moon Calculator" }
-                }
-                body {
-                    div {
-                        id = "kastro-demo-container"
-                    }
-                    script {
-                        src = "kastro-demo.js?v=$VERSION"
-                    }
-                    footer {
-                        p {
-                            css {
-                                padding = Padding(16.px)
-                                fontSize = 12.px
-                                opacity = 0.6
-                                textAlign = TextAlign.center
+                    body {
+                        div {
+                            id = "kastro-demo-container"
+                        }
+                        script {
+                            src = "kastro-demo.js?v=$VERSION"
+                        }
+                        footer {
+                            p {
+                                css {
+                                    padding = Padding(16.px)
+                                    fontSize = 12.px
+                                    opacity = 0.6
+                                    textAlign = TextAlign.center
+                                }
+                                +"Kastro Demo by James Yox."
+                                br
+                                +"kastro-js:0.6.0"
                             }
-                            +"Kastro Demo by James Yox."
-                            br
-                            +"kastro-js:0.5.0"
                         }
                     }
                 }
+                fromDirectory(resourcesDirectory) {
+                    copyFile("leaflet.css")
+                    copyFile("locate.svg")
+                    copyFile("back.svg")
+                    copyFile("github-mark-white.svg")
+                    copyFile("settings.svg")
+                    solarPhaseStrings()
+                    lightStateStrings()
+                }
             }
-            copyResource(resourcesDirectory, Path("leaflet.css"))
-            copyResource(resourcesDirectory, Path("locate.svg"))
-            copyResource(resourcesDirectory, Path("back.svg"))
-            copyResource(resourcesDirectory, Path("github-mark-white.svg"))
-            copyResource(resourcesDirectory, Path("settings.svg"))
-            solarPhaseStrings(resourcesDirectory)
-            lightStateStrings(resourcesDirectory)
         }
     }
 }
 
-private fun StaticSiteContext.solarPhaseStrings(resourcesDirectory: Path) {
-    copyResource(resourcesDirectory, Path(SolarPhase.Night.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.AstronomicalDawn.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.NauticalDawn.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.CivilDawn.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.Day.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.CivilDusk.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.NauticalDusk.description))
-    copyResource(resourcesDirectory, Path(SolarPhase.AstronomicalDusk.description))
+context(
+    fileSystem: FileSystem,
+    currentDirectory: CurrentDirectory,
+    fromDirectory: FromDirectory
+)
+private fun solarPhaseStrings() {
+    copyFile(SolarPhase.Night.description)
+    copyFile(SolarPhase.AstronomicalDawn.description)
+    copyFile(SolarPhase.NauticalDawn.description)
+    copyFile(SolarPhase.CivilDawn.description)
+    copyFile(SolarPhase.Day.description)
+    copyFile(SolarPhase.CivilDusk.description)
+    copyFile(SolarPhase.NauticalDusk.description)
+    copyFile(SolarPhase.AstronomicalDusk.description)
 }
 
-private fun StaticSiteContext.lightStateStrings(resourcesDirectory: Path) {
-    copyResource(resourcesDirectory, Path(LightState.BlueHourDusk.description))
-    copyResource(resourcesDirectory, Path(LightState.BlueHourDawn.description))
-    copyResource(resourcesDirectory, Path(LightState.GoldenHourDawn.description))
-    copyResource(resourcesDirectory, Path(LightState.GoldenHourDusk.description))
+context(
+    fileSystem: FileSystem,
+    currentDirectory: CurrentDirectory,
+    fromDirectory: FromDirectory
+)
+private fun lightStateStrings() {
+    copyFile(LightState.BlueHourDusk.description)
+    copyFile(LightState.BlueHourDawn.description)
+    copyFile(LightState.GoldenHourDawn.description)
+    copyFile(LightState.GoldenHourDusk.description)
 }
 
 fun HTMLTag.svg(
-    isPrettyPrint: Boolean = false,
     block: context(AttributeConsumer, @SvgTagDSL Svg) () -> Unit
 ) {
     unsafe {

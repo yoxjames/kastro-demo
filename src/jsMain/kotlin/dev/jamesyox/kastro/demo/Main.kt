@@ -41,7 +41,7 @@ fun main() {
         with(document) {
             getElementById("kastro-demo-container")?.append {
                 AppView(
-                    stylesheet = KastroDemoStylesheetAgreement,
+                    stylesheet = KastroDemoStylesheet,
                     globalState = globalState,
                 )
             }

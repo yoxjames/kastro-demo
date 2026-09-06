@@ -17,7 +17,7 @@
 
 package dev.jamesyox.kastro.demo
 
-import dev.jamesyox.kastro.demo.KastroDemoStylesheetAgreement.smallScreenOnly
+import dev.jamesyox.kastro.demo.KastroDemoStylesheet.smallScreenOnly
 import dev.jamesyox.kastro.demo.sol.stroke
 import dev.jamesyox.kastro.sol.SolarPhase
 import dev.jamesyox.statik.css.Selector
@@ -71,30 +71,19 @@ import kotlinx.css.top
 import kotlinx.css.vh
 import kotlinx.css.width
 
-interface KastroDemoStylesheet {
-    val eventTableRow: Selector.Class
-    val stateTable: Selector.Class
-    val stateTableRow: Selector.Class
-    val inactiveTab: Selector.Class
-    val activeTab: Selector.Class
-    val inputPanelActive: Selector.Class
-    val inputPanelInactive: Selector.Class
-    val smallScreenOnly: Selector.Class
-}
-
-object KastroDemoStylesheetAgreement : KastroDemoStylesheet {
-    override val eventTableRow = Selector.Class("event-table-row")
-    override val stateTableRow = Selector.Class("state-table-row")
-    override val inactiveTab = Selector.Class("inactive-tab")
-    override val activeTab = Selector.Class("active-tab")
-    override val inputPanelActive = Selector.Class("input-panel-active")
-    override val inputPanelInactive = Selector.Class("input-panel-inactive")
-    override val smallScreenOnly = Selector.Class("small-screens-only")
-    override val stateTable = Selector.Class("state-table")
+object KastroDemoStylesheet {
+    val eventTableRow = Selector.Class("event-table-row")
+    val stateTableRow = Selector.Class("state-table-row")
+    val inactiveTab = Selector.Class("inactive-tab")
+    val activeTab = Selector.Class("active-tab")
+    val inputPanelActive = Selector.Class("input-panel-active")
+    val inputPanelInactive = Selector.Class("input-panel-inactive")
+    val smallScreenOnly = Selector.Class("small-screens-only")
+    val stateTable = Selector.Class("state-table")
 }
 
 fun CssBuilder.KastroDemoStylesheet(
-    agreement: KastroDemoStylesheetAgreement,
+    agreement: KastroDemoStylesheet,
 ) {
     fun CssBuilder.tab() {
         color = Color.white

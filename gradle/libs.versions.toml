@@ -1,15 +1,15 @@
 [versions]
 current = "0.1.0"
 jvm = "17"
-benmanes-versions = "0.54.0"
-kotlin = "2.4.0"
+benmanes-versions = "0.61.0"
+kotlin = "2.4.10"
 detekt = "1.23.8"
 kotlin-datetime = "0.8.0"
-kotlinx-browser = "2026.6.3"
-kastro = "0.5.0"
+kotlinx-browser = "2026.9.1"
+kastro = "0.6.0"
 kotlinx-html = "0.12.0"
 kotlinx-coroutines = "1.11.0"
-svg4kt = "0.1.0"
+svg4kt = "0.2.0"
 statik = "0.1.0"
 
 [libraries]
